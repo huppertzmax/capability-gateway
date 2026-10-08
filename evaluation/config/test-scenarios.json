@@ -1,0 +1,29 @@
+[
+  {
+    "id": "S01",
+    "num_packages": 9,
+    "vulnerable_packages": 2,
+    "vulnerable_severity_counts": {
+      "medium": 1,
+      "critical": 1
+    }
+  },
+  {
+    "id": "S02",
+    "num_packages": 7,
+    "vulnerable_packages": 1,
+    "vulnerable_severity_counts": {
+      "low": 1
+    }
+  },
+  {
+    "id": "S03",
+    "num_packages": 11,
+    "vulnerable_packages": 3,
+    "vulnerable_severity_counts": {
+      "low": 1,
+      "medium": 1,
+      "critical": 1
+    }
+  }
+]

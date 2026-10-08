@@ -1,0 +1,100 @@
+Bulletin Digest Compaction Guide (Read-Only Reference)
+
+Purpose
+- Define how to compact repetitive bulletins into digest form without losing actionability.
+- Reduce alert fatigue while preserving incident-critical context.
+- Standardize summary quality across mailbox and chat channels.
+
+What this tool does
+- Returns a static guide for bulletin digest compaction.
+- Does not generate or dispatch digests automatically.
+- Does not read live incident streams.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Compaction objectives
+- preserve what changed since the last digest.
+- preserve required actions and stewardship status.
+- preserve severity trajectory and timing context.
+- remove redundant repetition and low-value noise.
+
+Digest eligibility rules
+- group events sharing incident id and component.
+- separate unrelated incidents even if same team is targeted.
+- include only events within configured digest window.
+- exclude unresolved compliance notices from compaction.
+
+Window strategies
+- rolling 15-minute window for severity one incidents.
+- rolling 30-minute window for severity two incidents.
+- hourly window for low-priority operational notices.
+- immediate dispatch bypass for explicit escalation events.
+
+Compaction methods
+- deduplicate identical status transitions.
+- collapse repeated retry errors into one aggregate entry.
+- summarize repeated acknowledgment reminders as one line.
+- retain first occurrence time and most recent occurrence time.
+
+Mandatory digest sections
+- incident summary sentence.
+- current severity and trend direction.
+- unresolved action list with stewards.
+- recent key events in chronological order.
+- next expected update time.
+
+Data integrity constraints
+- never remove explicit stewardship transfer events.
+- never hide escalation events in aggregate counters.
+- retain exact timestamps for legally relevant notices.
+- preserve links to canonical incident record.
+
+Digest payload example
+{
+  "incident_id": "INC-24012",
+  "window_start": "2026-03-01T18:00:00Z",
+  "window_end": "2026-03-01T18:30:00Z",
+  "severity": "SEV-2",
+  "trend": "stable",
+  "key_events": [
+    "18:04 UTC: API error rate rose above 8%",
+    "18:12 UTC: rollback initiated by release manager",
+    "18:21 UTC: error rate returned below 2%"
+  ],
+  "open_actions": [
+    "Validate cache warmup behavior",
+    "Confirm customer-impact estimate"
+  ]
+}
+
+Quality checks
+- verify every open action has a named steward.
+- verify trend label matches event chronology.
+- verify deduplication did not remove unique root-cause clues.
+- verify no unresolved escalation events are omitted.
+
+Channel formatting guidance
+- mailbox digests may include short section headings.
+- chat digests should keep lines concise and scannable.
+- pager channel should receive only critical delta summary.
+- avoid tables in channels with poor rendering support.
+
+Failure modes
+- over-compacting early signals during fast-moving outages.
+- merging incidents that share only superficial symptoms.
+- omitting stewardship changes after delegation.
+- publishing digests without explicit time window markers.
+
+Metrics
+- reduction in duplicate bulletins per incident.
+- recipient acknowledgment latency before and after compaction.
+- reopened incidents caused by missed digest context.
+- percentage of digests passing quality checks first try.
+
+Operational notes
+- tune windows by severity and incident volatility.
+- store raw-to-compact mapping for postmortem analysis.
+- run periodic replay tests on historical incident streams.
+- version compaction rules and notify stakeholders on changes.

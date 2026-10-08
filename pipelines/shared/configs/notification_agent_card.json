@@ -1,0 +1,31 @@
+{
+  "agent_id": "notification_agent",
+  "name": "Notification Agent",
+  "description": "Security notification agent that converts vulnerability findings into per-owner per-vulnerability emails and manages security communications.",
+  "version": "1.0.0",
+  "url": "http://localhost:9202/",
+  "default_input_modes": [
+    "text"
+  ],
+  "default_output_modes": [
+    "text"
+  ],
+  "capabilities": {
+    "streaming": false
+  },
+  "skills": [
+    {
+      "id": "notify_system_owners",
+      "name": "Notify System Owners",
+      "description": "Ability to send security notifications: consumes natural language security reports, groups findings by owner and vulnerabilities, drafts concise emails per owner per vulnerability (systems/packages, actions), and persists them.",
+      "tags": [
+        "notification",
+        "email",
+        "security"
+      ],
+      "examples": [
+        "There's a vulnerability GHSA-7x3m-9w8k-2p4q in the Maven package org.apache.struts:struts2-core version 2.5.30. The vulnerable range spans from 2.5.0 to 2.5.32. The affected systems are payment-gateway-api, user-auth-service, and admin-dashboard-backend, all owned by Sarah Chen. Send the notification to sarah.chen@company.com."
+      ]
+    }
+  ]
+}

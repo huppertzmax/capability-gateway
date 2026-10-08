@@ -1,0 +1,29 @@
+\section{Introduction}
+
+Recent years have seen rapid progress in large language model agents and increasingly complex multi-agent ecosystems.
+Protocols such as the Model Context Protocol (MCP) and Agent-to-Agent (A2A) promise interoperable tool use and agent communication.
+In practice, however, current frameworks still tend to expose too much information too early.
+Semantic capability descriptions, protocol formats, and execution details are often injected into the agent context upon initialization.
+
+We argue that this is an architectural problem.
+Classical agent literature characterizes agents as autonomous entities that act based on their own decision-making process\cite{agent_autonomy_definition}.
+Recent work such as MCP-Zero\cite{fei2025mcpzero} similarly argues that exposing full tool schemas to the model creates context overhead and reduces decision autonomy.
+In heterogeneous ecosystems, this problem becomes even more pronounced.
+Agents must reason not only about which capability they need, but also about protocol-specific execution patterns for both tools and peer agents.
+This increases context bloat, raises the risk of protocol confusion, and can degrade end-to-end performance.
+
+To address this, we propose a unified capability gateway that mediates both MCP tools and A2A peer agents through a common capability layer.
+Its core purpose is staged information exposure, so that agents can plan on semantic capability information before execution-specific protocol details enter the context.
+At the same time, the gateway also acts as a central configuration and governance point, where routing, protocol integration, and cross-cutting control mechanisms can be handled consistently.
+
+We evaluate this idea in a realistic vulnerability-detection multi-agent system.
+We compare two direct framework-based baselines against two gateway-based architectures and analyze task success, latency, token consumption, and common failure patterns.
+We further study retrieval-based capability selection under growing capability load.
+Our results show that gateway-based architectures are more robust and efficient in the evaluated setting, while retrieval becomes especially useful as the surrounding environment grows.
+
+Our main contributions are:
+\begin{itemize}
+    \item We propose a unified capability gateway for heterogeneous multi-agent systems that enables staged information exposure across planning and execution.
+    \item We show empirically that gateway-based architectures outperform direct protocol exposure baselines in robustness, token efficiency, and end-to-end task success in our benchmark setting.
+    \item We show that retrieval-based capability selection becomes most useful as the environment grows, as it enables agents to fetch only relevant information.
+\end{itemize}

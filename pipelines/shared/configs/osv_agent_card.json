@@ -1,0 +1,31 @@
+{
+  "agent_id": "osv_agent",
+  "name": "OSV Agent",
+  "description": "OSV vulnerability lookup agent that analyzes packages and provides plain-language summaries of vulnerabilities, affected versions, severity, and references. Additionally it will trigger further steps to notify the appropriate system owners based on the affected systems.",
+  "version": "1.0.0",
+  "url": "http://localhost:9200/",
+  "default_input_modes": [
+    "text"
+  ],
+  "default_output_modes": [
+    "text"
+  ],
+  "capabilities": {
+    "streaming": false
+  },
+  "skills": [
+    {
+      "id": "get_osv_report",
+      "name": "Get OSV Report",
+      "description": "Exposes OSV vulnerability lookup: accepts a GHSA id and returns a plain-language summary of packages, affected versions, severity, and references for downstream matching.",
+      "tags": [
+        "osv",
+        "report",
+        "vulnerability"
+      ],
+      "examples": [
+        "Analyze the vulnerability report for GHSA-vgqx-447m-wvcj and summarize the affected packages and versions."
+      ]
+    }
+  ]
+}

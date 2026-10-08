@@ -1,0 +1,103 @@
+Dependency Upgrade Policy Framework (Read-Only Reference)
+
+Purpose
+- Define how teams decide when and how dependencies are upgraded.
+- Balance security, stability, and delivery velocity with explicit policy tiers.
+- Provide one shared framework for planners, reviewers, and automation.
+
+What this tool does
+- Returns a static policy framework for upgrade decision making.
+- Does not execute upgrades or open pull requests.
+- Does not inspect package registries in real time.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Policy goals
+- Keep critical dependencies current with low operational disruption.
+- Make upgrade urgency explicit and auditable.
+- Avoid ad-hoc exceptions that accumulate technical risk.
+
+Upgrade tiers
+Tier 0: Emergency security upgrades.
+Tier 1: High-priority reliability and compatibility fixes.
+Tier 2: Routine minor and patch updates.
+Tier 3: Strategic major-version migrations.
+
+Decision inputs
+- severity of known defects or risk advisories.
+- compatibility impact on dependent services.
+- runtime criticality of the dependency.
+- change size and expected test effort.
+- available rollback and feature-flag controls.
+
+Default cadence
+- Tier 0: within 24 hours.
+- Tier 1: within 7 days.
+- Tier 2: within 30 days.
+- Tier 3: planned quarterly with migration milestones.
+
+Approval matrix
+- Tier 0 requires one on-call approver plus incident ticket link.
+- Tier 1 requires service steward approval.
+- Tier 2 can be auto-approved if test and policy gates pass.
+- Tier 3 requires architecture review and risk sign-off.
+
+Testing expectations
+- Always run unit and integration test suites before merge.
+- Require smoke tests in a staging-like environment for Tier 1+.
+- For Tier 3, require explicit regression scope and rollback drill.
+
+Rollback requirements
+- Record previous known-good version before rollout.
+- Automate rollback trigger on critical SLO degradation.
+- Preserve deployment metadata for fast root-cause analysis.
+
+Exception policy
+- Exceptions must include steward, expiration date, and rationale.
+- No indefinite exception windows.
+- Expired exceptions are treated as policy violations.
+
+Evidence schema
+{
+  "dependency": "string",
+  "current_version": "string",
+  "target_version": "string",
+  "tier": "0|1|2|3",
+  "risk_assessment": "string",
+  "approval": {
+    "required": ["string"],
+    "granted_by": ["string"]
+  },
+  "rollback_plan": "string"
+}
+
+Automation guardrails
+- Block merge when required approvals are missing.
+- Block merge when policy tier is absent or inconsistent.
+- Warn on skipped test suites with required labels.
+- Enforce exception expiration checks in CI.
+
+Communication requirements
+- Notify impacted teams before Tier 1 and Tier 3 rollouts.
+- Include explicit maintenance windows for risky upgrades.
+- Provide steward and escalation path in all rollout notes.
+
+Common failure patterns
+- Large bundled upgrades that hide root causes.
+- Upgrades without explicit rollback criteria.
+- Repeated emergency upgrades caused by stale Tier 2 cadence.
+- Exception debt that is never repaid.
+
+Metrics to track
+- mean time to upgrade by tier.
+- failed upgrade rate.
+- percentage of dependencies within policy window.
+
+Implementation checklist
+- define tier mapping policy.
+- codify approvals in workflow automation.
+- integrate test and rollback gates.
+- publish dashboard for compliance metrics.
+- review framework effectiveness monthly.

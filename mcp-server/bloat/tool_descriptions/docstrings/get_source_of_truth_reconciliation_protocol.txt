@@ -1,0 +1,100 @@
+Source-of-Truth Reconciliation Protocol (Read-Only Reference)
+
+Purpose
+- Define how to reconcile conflicting stewardship records from multiple source systems.
+- Improve consistency of final entity decisions used by routing and reporting workflows.
+- Ensure every resolved conflict has transparent precedence rationale.
+
+What this tool does
+- Returns a static protocol for source-of-truth reconciliation.
+- Does not connect to CMDB, HR, or repository APIs.
+- Does not persist reconciliation outcomes.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Reconciliation scope
+- stewardship team assignment for software components.
+- escalation contact assignment for operational incidents.
+- authoritative namespace assignment for identity records.
+- lifecycle state assignment for active and deprecated assets.
+
+Accepted source classes
+- Source A: service catalog curated by platform operations.
+- Source B: repository metadata maintained by development teams.
+- Source C: incident response stewardship map.
+- Source D: manually curated exception registry.
+
+Precedence model
+- Source D overrides others only within explicit validity window.
+- Source C outranks Source B for active incident routing.
+- Source A outranks Source B for steady-state stewardship reporting.
+- Source B is used when higher-precedence sources are missing.
+
+Conflict categories
+- hard conflict: two high-precedence sources disagree.
+- soft conflict: high-precedence source is stale or incomplete.
+- structural conflict: fields use incompatible schemas.
+- temporal conflict: records disagree due to update timing.
+
+Freshness guards
+- Source A is stale after 14 days without update.
+- Source B is stale after 7 days without repository activity.
+- Source C is stale after 30 days without incident verification.
+- stale status reduces source confidence by one tier.
+
+Confidence tiers
+- Tier 1: direct agreement across two non-stale high-precedence sources.
+- Tier 2: one high-precedence source plus corroborating lower source.
+- Tier 3: single non-stale source without corroboration.
+- Tier 4: only stale or exception-based evidence available.
+
+Reconciliation output example
+{
+  "entity": "billing-ledger-service",
+  "resolved_steward": "team-finance-platform",
+  "resolved_contact": "finance-oncall@example.com",
+  "confidence_tier": "Tier 2",
+  "sources_used": ["Source A", "Source C"],
+  "conflict_category": "temporal conflict",
+  "rationale": "Incident map updated after repository transfer"
+}
+
+Resolution workflow
+1) normalize source schemas to canonical field model.
+2) evaluate source freshness and confidence downgrade rules.
+3) classify conflict category and apply precedence model.
+4) produce resolved record with confidence tier.
+5) queue review when confidence tier is Tier 3 or Tier 4.
+
+Manual review requirements
+- hard conflicts always require two-person review.
+- confidence Tier 4 outcomes require escalation steward assignment.
+- unresolved structural conflicts require schema remediation ticket.
+- temporal conflicts older than ten days require platform review.
+
+Failure modes
+- ignoring freshness guards during incident spikes.
+- letting exception registry entries outlive validity windows.
+- overwriting rationale fields during bulk reconciliation jobs.
+- mixing staging stewardship data into production reconciliation.
+
+Control recommendations
+- schedule nightly reconciliation with deterministic replay support.
+- retain source snapshots for reproducibility and audits.
+- alert on conflict volume spikes by source class.
+- publish monthly confidence distribution to leadership.
+
+Quality metrics
+- percentage of entities resolved at Tier 1 or Tier 2.
+- median time to close hard conflict reviews.
+- recurrence rate of conflicts on the same entity.
+- stale-source contribution rate to final decisions.
+
+Operational notes
+- version precedence model and announce policy changes.
+- keep source connectors schema-tested before deployment.
+- ensure reconciliation ids are traceable across pipelines.
+- align retention period with governance requirements.
+- include reconciliation run ids in downstream routing payloads.

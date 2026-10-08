@@ -1,0 +1,41 @@
+\section{Results}\label{results}
+
+\subsection{GPT-5 Benchmarks}
+
+Across the $20$-scenario benchmark, gateway-based architectures achieve substantially higher task effectiveness than the CrewAI baselines on the evaluated models, namely GPT-5, GPT-5-mini, and GPT-5-nano.
+With GPT-5 as their backbone, both \emph{Gateway} and \emph{Gateway-RAG} achieve high success scores, indicating that the unified capability gateway yields reliable tasks completion.
+The simple pipelines on the other hand perform rather poorly:
+\emph{Simple} is excluded from the reported results, as it did not produce meaningful results for comparison.
+Reasons are discussed in the following section.
+While \emph{Simple-Crew} is able to complete end-to-end pipeline runs, it performs worst across all reported metrics.
+The difference in performance compared to the gateway-based architectures is most observable in score, with an absolute gap of nearly $90\%$.
+Moreover, while achieving roughly similar input token consumption, the token output of gateway-based architectures is greatly reduced, suggesting less framework-specific verbosity and more efficient agent handoffs.
+Finally, \emph{Gateway} outperforms the retrieval-augmented variant across all metrics.
+
+\input{figures/default}
+
+\subsection{Model Comparison}
+
+Across all tested models, the CrewAI baselines remain ineffective.
+Notably, \emph{Simple-Crew}'s quality degrades with increased model capacity:
+Starting from $14\%$ task success rate with GPT-5-nano down to $3\%$ with GPT-5, as observable in tables~\ref{fig:gpt-5-nano}, \ref{fig:gpt-5-mini}, and \ref{fig:gpt-5-appendix}.
+Also, token consumption increases substantially as models grow larger.
+
+The number of output tokens in both pipelines follows a distinct pattern:
+GPT-5-nano consumes the most tokens by far, GPT-5-mini drastically reduces consumption, and with GPT-5 it slightly increases again.
+
+In contrast, \emph{Gateway} scales strongly in task success with model capacity.
+Its performance rises from roughly $49\%$ with GPT-5-nano to $89\%$ with GPT-5-mini and above $93\%$ with GPT-5, showing that the architecture already achieves very strong results with the mid-sized model in the compact environment.
+
+\emph{Gateway-RAG} also benefits from increased model capacity, but more gradually and from a much lower starting point.
+On GPT-5-nano, the retrieval-augmented variant even underperforms \emph{Simple-Crew} in task success despite being more efficient on the other reported metrics.
+With GPT-5-mini and GPT-5, its task success improves substantially, yet it remains below \emph{Gateway} across all tested backbones.
+This suggests that retrieval-augmented capability discovery is not beneficial in a perfectly pure environment.
+
+\subsection{Environment Scaling Results}
+
+As already described in subsection~\ref{env-scaling}, starting from the perfectly configured environment, we gradually increase the number of available tools.
+Under this growing capability load, both gateway-based variants remain consistent on all reported metrics, with one exception:
+\emph{Gateway}'s input token consumption increases roughly proportional to the number of available tools, whereas \emph{Gateway-RAG} remains nearly constant.
+
+\input{figures/bloat_tokens_in}

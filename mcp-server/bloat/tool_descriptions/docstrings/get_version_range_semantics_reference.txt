@@ -1,0 +1,103 @@
+Version Range Semantics Reference (Read-Only Reference)
+
+Purpose
+- Standardize interpretation of version constraints across dependency workflows.
+- Prevent ambiguity in inclusive and exclusive bound handling.
+- Provide deterministic guidance for parsing, storing, and rendering ranges.
+
+What this tool does
+- Returns a static reference for version range semantics.
+- Does not compute satisfiability against real package indexes.
+- Does not rewrite lockfiles or dependency manifests.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Core terms
+- comparator: an operator such as >, >=, <, <=, =, !=.
+- constraint: one comparator plus one version token.
+- range: a set of constraints interpreted with logical AND.
+- lower bound: minimum accepted version edge.
+- upper bound: maximum accepted version edge.
+
+Structured range shape
+{
+  "kind": "range",
+  "constraints": [
+    {"op": ">=", "version": "1.2.0"},
+    {"op": "<", "version": "2.0.0"}
+  ],
+  "notes": "optional"
+}
+
+Rule set
+1) Constraints are combined with logical AND.
+2) Operators must be one of >, >=, <, <=, =, !=.
+3) Version values remain strings at rest.
+4) Serialize constraints in stable order for hashing.
+5) Keep user-entered raw range text separately from normalized form.
+6) Represent open bounds by omitted constraints, not sentinel versions.
+7) Reject empty version tokens after trimming.
+8) Reject contradictory ranges when detectable.
+
+Inclusive and exclusive bounds
+- Use >= for inclusive lower bound.
+- Use > for exclusive lower bound.
+- Use <= for inclusive upper bound.
+- Use < for exclusive upper bound.
+- Prefer half-open intervals when policy allows.
+
+Pre-release guidance
+- Pre-releases usually sort below the final release.
+- Inclusion behavior differs by ecosystem and must be explicit.
+- Do not assume >=1.0.0 includes 1.0.0-alpha.1.
+- Store a policy flag when pre-release inclusion is required.
+
+Display recommendations
+- Render deterministic text such as ">= 1.2.0 and < 2.0.0".
+- Avoid shorthand that can imply different semantics across teams.
+- Show exclusions explicitly, for example "!= 1.2.4".
+
+Examples
+Example A
+{
+  "kind": "range",
+  "constraints": [{"op": "<", "version": "1.5.0"}]
+}
+
+Example B
+{
+  "kind": "range",
+  "constraints": [
+    {"op": ">=", "version": "2.1.0"},
+    {"op": "<", "version": "2.2.0"}
+  ]
+}
+
+Example C
+{
+  "kind": "range",
+  "constraints": [
+    {"op": ">=", "version": "1.0.0"},
+    {"op": "<", "version": "2.0.0"},
+    {"op": "!=", "version": "1.5.3"}
+  ]
+}
+
+Common pitfalls
+- Comparing versions lexicographically as plain strings.
+- Encoding open bounds as "*" inside normalized JSON.
+- Forgetting to preserve whether a bound is inclusive.
+- Accepting unsupported operator aliases in persisted data.
+
+Operational recommendations
+- Add test fixtures for ecosystem-specific parsing behavior.
+- Record normalization errors as typed failure payloads.
+- Track contradictory range frequency as a data quality metric.
+- Cache normalized ranges by stable JSON hash.
+
+Appendix: Validation fields
+- input_text
+- normalized_constraints
+- parse_status

@@ -1,0 +1,25 @@
+{
+  "osv_agent": {
+    "allow_agents": [
+      "matcher_agent"
+    ],
+    "allow_tools": [
+      "get_osv_vulnerability_data"
+    ]
+  },
+  "matcher_agent": {
+    "allow_agents": [
+      "notification_agent"
+    ],
+    "allow_tools": [
+      "get_sbom_data",
+      "get_system_owner_data"
+    ]
+  },
+  "notification_agent": {
+    "allow_agents": [],
+    "allow_tools": [
+      "send_security_email_notification"
+    ]
+  }
+}

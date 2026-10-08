@@ -1,0 +1,100 @@
+Registry Namespace Drift Audit Manual (Read-Only Reference)
+
+Purpose
+- Define an audit method for detecting namespace drift across package and service registries.
+- Reduce false stewardship mappings caused by historical naming divergence.
+- Capture reproducible evidence for merge, split, and alias decisions.
+
+What this tool does
+- Returns a static manual for namespace drift audits.
+- Does not perform live registry lookups.
+- Does not update canonical namespace mappings.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Namespace drift definition
+- Drift occurs when equivalent entities use inconsistent namespace forms.
+- Drift may be accidental, policy-driven, or migration-driven.
+- Drift includes truncation, prefix mutation, and hierarchy inversion.
+
+Primary audit triggers
+- sudden increase in unmatched entities after ingestion.
+- repeated reviewer overrides on namespace-based decisions.
+- onboarding of a new registry with incompatible naming rules.
+
+Canonical namespace model
+- namespace segments are lowercase and slash-delimited.
+- legal segments allow letters, digits, dash, and underscore.
+- environment markers are disallowed in canonical identity.
+
+Drift categories
+- Prefix drift: old organization prefix retained after migration.
+- Suffix drift: service suffixes appended inconsistently.
+- Segment drift: missing or extra hierarchy level.
+- Alias drift: colloquial short name replacing formal namespace.
+
+Severity scoring
+- Score 1 when drift is cosmetic and reversible.
+- Score 2 when drift affects reporting but not routing.
+- Score 3 when drift causes moderate review overhead.
+- Score 4 when drift causes stewardship misrouting.
+- Score 5 when drift can block incident escalation.
+
+Audit record example
+{
+  "entity_id": "component-8892",
+  "observed_namespace": "payments-platform/checkoutsvc",
+  "canonical_namespace": "payments/checkout-service",
+  "drift_category": "Segment drift",
+  "severity": 4,
+  "evidence": [
+    "service catalog entry 2026-02-14",
+    "build manifest namespace field",
+    "review override ticket MATCH-421"
+  ],
+  "recommended_action": "Create alias mapping and update ingest normalizer"
+}
+
+Detection heuristics
+- compare segment count against canonical schema.
+- flag prefixes listed in migration deprecation registry.
+- compute token overlap between observed and canonical paths.
+- inspect hyphen and underscore normalization collisions.
+
+Resolution workflow
+1) classify drift category using deterministic rules.
+2) attach at least two evidence artifacts.
+3) propose canonical mapping or split decision.
+4) request reviewer approval for severity 4 and 5 cases.
+5) publish mapping update with effective date.
+
+Exception handling
+- temporary dual namespaces are allowed during cutover windows.
+- exceptions require steward, reason, and planned end date.
+- expired exceptions are automatically raised for review.
+- unresolved exceptions beyond 30 days require escalation.
+
+Common root causes
+- inconsistent export logic across internal platforms.
+- manual namespace edits in downstream spreadsheets.
+- missing migration playbook in acquisition integrations.
+- stale alias records reused as canonical identifiers.
+
+Control recommendations
+- enforce namespace schema validation at ingestion time.
+- run weekly drift diff against canonical mapping table.
+- maintain deprecation list for retired namespace prefixes.
+- require changelog entries for any canonical namespace edits.
+
+Quality metrics
+- percentage of entities with canonical-compliant namespace.
+- median time to resolve severity 4 and 5 drift findings.
+- reviewer override rate on namespace-driven decisions.
+- number of active exceptions past their end date.
+
+Operational notes
+- version audit rules and publish in governance repository.
+- keep sample drift cases for reviewer training.
+- archive audit evidence for at least 12 months.

@@ -1,0 +1,14 @@
+\begin{abstract}
+
+Today's multi-agent systems grow by adding more tools and peer agents.
+However, current frameworks often expose semantic capability descriptions, protocol formats, and execution details at the same time.
+This forces agents to plan and handle protocol mechanics in a single context.
+We formalize this as a problem of poorly staged information exposure.
+
+To address it, we propose a unified capability gateway that mediates both tools and peer agents through a common capability layer.
+The gateway lets agents plan on semantic capability information first and delays execution-specific details until they are needed.
+It also provides a central point for configuration and governance across protocols.
+In a vulnerability-detection benchmark, gateway-based architectures improve task success, token efficiency, and latency over simple protocol-exposure baselines.
+We further show that retrieval-based capability selection becomes especially useful as the environment grows, because it prevents irrelevant capability information from entering the context.
+
+\end{abstract}

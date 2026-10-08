@@ -1,0 +1,100 @@
+Release Note Signal Extraction Guide (Read-Only Reference)
+
+Purpose
+- Define a repeatable approach for extracting actionable risk signals from release notes.
+- Separate maintenance noise from changes that can affect security or reliability.
+- Standardize annotation outputs used in dependency triage meetings.
+
+What this tool does
+- Returns a static guide for release-note signal extraction.
+- Does not read release notes from package hosts.
+- Does not auto-classify changes for specific repositories.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Signal classes
+- Security control changes affecting auth, crypto, or trust boundaries.
+- Breaking API behavior that can invalidate runtime assumptions.
+- Data format and migration changes with rollback implications.
+- Dependency graph shifts that add new high-risk transitive libraries.
+- Operational fixes that alter logging, retries, or circuit breaking.
+
+Non-signal noise classes
+- wording or typo-only release note edits.
+- cosmetic documentation refreshes with no behavior impact.
+- test fixture updates isolated from production code paths.
+- CI workflow tweaks that do not alter released artifacts.
+
+Extraction workflow
+1) Parse release notes into atomic statements.
+2) Tag each statement by signal class or noise class.
+3) Attach evidence quote and source URL.
+4) Assign confidence and estimated impact window.
+5) Export findings to triage record.
+
+Evidence requirements
+- include exact release version and publication date.
+- include package coordinate and ecosystem.
+- include statement-level quote under 220 characters.
+- include reasoning for impact classification.
+- include reviewer identifier for high-impact annotations.
+
+Confidence rubric
+- High: clear explicit behavior change with production relevance.
+- Medium: likely impact but ambiguous deployment conditions.
+- Low: indirect hint requiring external confirmation.
+
+Impact window categories
+- Immediate: effect appears as soon as package is deployed.
+- Short-term: effect likely after adjacent service updates.
+- Deferred: effect tied to future deprecations or migrations.
+- Unknown: insufficient context from release note text.
+
+Extraction output example
+{
+  "package": "pkg:npm/axios@1.8.2",
+  "release_date": "2026-01-19",
+  "statement": "Tightened default redirect header forwarding rules",
+  "signal_class": "Security control changes",
+  "confidence": "High",
+  "impact_window": "Immediate",
+  "recommended_follow_up": "Validate redirect-based auth flows in staging"
+}
+
+Prioritization rules
+- security control changes with high confidence rank first.
+- breaking API notes rank above performance-only optimizations.
+- unknown impact windows require follow-up before closure.
+- repeat signals across consecutive releases raise priority.
+
+Review checklist
+- confirm statement is not duplicated across patch notes.
+- verify ecosystem coordinate normalization before export.
+- ensure recommendation is concrete and testable.
+- ensure triage steward is assigned for medium and high items.
+
+Frequent misclassifications
+- marking migration prerequisites as optional housekeeping.
+- treating deprecation warnings as immediate breakage.
+- interpreting benchmark claims as guaranteed runtime gains.
+- over-prioritizing refactor notes without behavior changes.
+
+Integration guidance
+- map signal classes to risk advisory review queue labels.
+- connect extracted items to dependency upgrade work items.
+- include extraction confidence in stakeholder summaries.
+- archive raw parsed statements for retrospective audits.
+
+Quality metrics
+- precision of high-priority tags after peer review.
+- percentage of extracted items with complete evidence.
+- turnaround time from release publication to annotation.
+- reopened triage items due to misclassified release notes.
+
+Operational notes
+- calibrate class definitions every quarter.
+- maintain ecosystem-specific examples for reviewer onboarding.
+- prefer concise recommendations over speculative narratives.
+- keep extraction output machine-readable and versioned.

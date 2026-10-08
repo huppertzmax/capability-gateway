@@ -1,0 +1,100 @@
+Transitive Dependency Visibility Matrix (Read-Only Reference)
+
+Purpose
+- Provide a structured matrix for measuring visibility of transitive dependencies.
+- Clarify where dependency trees are complete, partial, or unverifiable.
+- Support triage prioritization when risk advisory intelligence is incomplete.
+
+What this tool does
+- Returns a static reference matrix for transitive visibility analysis.
+- Does not query package registries or lockfile services.
+- Does not infer exploitability or assign CVSS-based severity.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Matrix dimensions
+- Axis one is dependency depth from direct to deep transitive.
+- Axis two is evidence quality from verified to unknown.
+- Axis three is runtime relevance from build-only to runtime-critical.
+- Combined cell status drives triage and stewardship decisions.
+
+Depth taxonomy
+- Depth 0 means first-party code only.
+- Depth 1 means direct third-party dependencies.
+- Depth 2 means dependencies of direct dependencies.
+- Depth 3 means dependencies at three hops or more.
+
+Evidence quality classes
+- Verified: lockfile and artifact metadata agree.
+- Corroborated: one trusted source plus one partial source.
+- Partial: only one source with known blind spots.
+- Unknown: no reproducible source available.
+
+Runtime relevance classes
+- Runtime-critical affects production request path.
+- Runtime-supporting affects observability or control plane logic.
+- Build-time influences binaries but not runtime process execution.
+- Dev-only used for local tooling and CI validation.
+
+Cell interpretation rules
+- Depth 3 plus Unknown evidence defaults to high uncertainty.
+- Runtime-critical cells require update and monitoring stewardship.
+- Build-time cells still require integrity controls and provenance checks.
+- Dev-only cells can be deferred only with documented rationale.
+
+Sample matrix snapshot
+{
+  "service": "checkout-gateway",
+  "snapshot_time": "2026-02-27T09:10:00Z",
+  "cells": [
+    {"depth": 1, "evidence": "Verified", "runtime": "Runtime-critical", "count": 19},
+    {"depth": 2, "evidence": "Corroborated", "runtime": "Runtime-critical", "count": 34},
+    {"depth": 3, "evidence": "Partial", "runtime": "Runtime-supporting", "count": 27},
+    {"depth": 3, "evidence": "Unknown", "runtime": "Build-time", "count": 11}
+  ]
+}
+
+Coverage thresholds
+- Verified coverage below 70 percent requires corrective planning.
+- Unknown coverage above 15 percent blocks normal closure in risk review.
+- Runtime-critical unknown entries older than 7 days require escalation.
+- Build-time unknown entries older than 30 days require audit sign-off.
+
+Data source hierarchy
+- Primary: reproducible lockfile and signed build manifest.
+- Secondary: package manager graph output with pinned versions.
+- Tertiary: inventory manifest export from current production artifact.
+- Supplemental: manual dependency notes from service stewards.
+
+Quality control checks
+- detect duplicate coordinates introduced by aliasing.
+- detect missing package URL fields for ecosystem normalization.
+- detect unsupported version selectors in parsed dependency trees.
+- detect orphan nodes with no inbound or outbound edges.
+
+Decision guidance
+- prioritize runtime-critical unknown cells for near-term hardening.
+- reduce partial evidence by adding secondary corroboration sources.
+- preserve deferred decisions with explicit review date.
+- track matrix deltas release by release for trend visibility.
+
+Common anti-patterns
+- collapsing all depth levels into one aggregate percentage.
+- assuming depth 1 completeness implies depth 3 completeness.
+- classifying optional runtime plugins as dev-only dependencies.
+- omitting evidence class when exporting dashboard metrics.
+
+Governance recommendations
+- publish matrix definitions in engineering standards portal.
+- run automated matrix generation in each production release.
+- require reviewer approval for downgrading evidence classes.
+- maintain historical snapshots for at least four quarters.
+
+Operational notes
+- align matrix fields with incident and risk advisory ticket schema.
+- avoid manual spreadsheet-only workflows for status updates.
+- version matrix logic when taxonomy definitions change.
+- include confidence notes for any manually curated entries.
+- map uncertainty hotspots to quarterly hardening objectives.

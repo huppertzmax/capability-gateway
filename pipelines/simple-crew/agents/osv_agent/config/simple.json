@@ -1,0 +1,23 @@
+{
+    "name": "Data Management Crew",
+    "agents": [
+        {
+            "id": "data_management_agent",
+            "role": "OSV Data Specialist",
+            "goal": "Fetch OSV vulnerability data for one or multiple GHSA identifiers using the get_osv_vulnerability_data MCP tool and coordinate with the SBOM CVE Matching Agent. Keep your final response concise and focused - no verbose explanations or detailed reports. Create a brief summary with key vulnerability data: package name, affected versions, GHSA/CVE IDs, severity if available.",
+            "backstory": "Purpose-built OSV data specialist that fetches vulnerability information from OSV API and creates concise, actionable summaries for downstream agents. Specializes in A2A communication, delegating to the Matcher Agent for SBOM impact analysis. Focuses on clarity and brevity.",
+            "a2a": true,
+            "mcp": true
+        }
+    ],
+    "tasks": [
+        {
+            "name": "data_management_task",
+            "agent": "data_management_agent",
+      "description": "{query} \n\nProtocol: 1) Extract one or more GHSA IDs from the input. 2) For each GHSA ID, call get_osv_vulnerability_data MCP tool once with the vulnerability_id parameter set to the GHSA ID ('GHSA-...'). If given multiple GHSA IDs, gather data for all of them (batch tool calls in one step if supported; never call the tool twice for the same ID). This step is critical as it will gather the relevant vulnerability report for the further agents, make sure to perform the MCP call. 3) Parse the returned JSON exactly as-is; do not invent missing fields. 4) For each vulnerability, build a plain-text summary block that contains the most relevant information like the GHSA and CVE IDs, the package name, affected versions and other relevant information. Include the range semantics clearly: vulnerable_range_start is OSV \"introduced\" (null only if introduced=0) and vulnerable_range_end is the first OSV \"fixed\" version (do not use last affected). 5) Delegate to the SBOM CVE Matching Agent via A2A with a comprehensive natural-language handoff containing all vulnerability context. If OSV data is missing or fails, state it briefly.\n\nCRITICAL TOOL INPUT FORMAT: When calling MCP tools, your Action Input MUST be valid JSON with proper unescaped quotes. Use regular double quotes directly in your JSON, do NOT escape them with backslashes.\nCorrect format: Action Input: {\"vulnerability_id\": \"GHSA-xxxx-xxxx-xxxx\"}\nINCORRECT format: Action Input: {{\\\"vulnerability_id\\\": \\\"GHSA-xxxx-xxxx-xxxx\\\"}}\nAlways use the correct format with unescaped quotes.",
+            "expected_output": "Plain-text vulnerability summary for each GHSA ID provided, containing key data (package name, affected versions, GHSA/CVE IDs, severity, refs) + downstream result summary. Brief and concise - 2-4 sentences maximum."
+        }
+    ],
+    "process": "sequential",
+    "tracing": true
+}

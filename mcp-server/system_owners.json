@@ -1,0 +1,883 @@
+[
+  {
+    "owner_id": "OWN-101",
+    "name": "Alex Johnson",
+    "role": "TechLead",
+    "department": "Sales IT",
+    "email": "alex.johnson@sales.corp.com",
+    "phone": "+1-555-0101",
+    "escalation_level": 1,
+    "backup_owner": "OWN-309",
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "patch_approve",
+    "Systems": [
+      "data_analytics_service",
+      "kryonet"
+    ]
+  },
+  {
+    "owner_id": "OWN-102",
+    "name": "Sarah Miller",
+    "role": "SRE",
+    "department": "Infra Ops",
+    "email": "sarah.miller@infra.corp.com",
+    "phone": "+44-20-7946-0102",
+    "escalation_level": 1,
+    "backup_owner": "OWN-205",
+    "oncall_schedule": {
+      "this_week": true
+    },
+    "notification_preference": "slack",
+    "approval_authority": "patch_approve",
+    "Systems": [
+      "codegen_service",
+      "auth_service",
+      "retrofit-spring-boot-starter"
+    ]
+  },
+  {
+    "owner_id": "OWN-401",
+    "name": "Emily Brown",
+    "role": "Finance IT Lead",
+    "department": "Finance IT",
+    "email": "emily.brown@finance.corp.com",
+    "phone": "+61-2-9012-0106",
+    "escalation_level": 1,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "patch_approve",
+    "Systems": [
+      "netty-socketio"
+    ]
+  },
+  {
+    "owner_id": "OWN-201",
+    "name": "Michael Chen",
+    "role": "Platform Lead",
+    "department": "Core Platform",
+    "email": "michael.chen@platform.corp.com",
+    "phone": "+1-555-0201",
+    "escalation_level": 1,
+    "backup_owner": "OWN-202",
+    "oncall_schedule": {
+      "this_week": true
+    },
+    "notification_preference": "slack",
+    "approval_authority": "patch_approve",
+    "Systems": [
+      "api_gateway",
+      "service_mesh",
+      "kilim"
+    ]
+  },
+  {
+    "owner_id": "OWN-202",
+    "name": "Linda Park",
+    "role": "SRE",
+    "department": "Platform Ops",
+    "email": "linda.park@platform.corp.com",
+    "phone": "+1-555-0202",
+    "escalation_level": 2,
+    "backup_owner": "OWN-201",
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "slack",
+    "approval_authority": "incident_response",
+    "Systems": [
+      "kubernetes_cluster",
+      "lwjgl3"
+    ]
+  },
+  {
+    "owner_id": "OWN-203",
+    "name": "Raj Patel",
+    "role": "Data Engineering Lead",
+    "department": "Data Platform",
+    "email": "raj.patel@data.corp.com",
+    "phone": "+91-22-4001-0203",
+    "escalation_level": 1,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "schema_change",
+    "Systems": [
+      "data_warehouse",
+      "etl_pipeline",
+      "progressbar"
+    ]
+  },
+  {
+    "owner_id": "OWN-204",
+    "name": "Sofia Garcia",
+    "role": "ML Platform Owner",
+    "department": "AI Platform",
+    "email": "sofia.garcia@ai.corp.com",
+    "phone": "+34-91-555-0204",
+    "escalation_level": 1,
+    "backup_owner": "OWN-210",
+    "oncall_schedule": {
+      "this_week": true
+    },
+    "notification_preference": "slack",
+    "approval_authority": "model_release",
+    "Systems": [
+      "ml_training_service",
+      "feature_store",
+      "JSON-java"
+    ]
+  },
+  {
+    "owner_id": "OWN-205",
+    "name": "Tom Wilson",
+    "role": "Security Lead",
+    "department": "Security",
+    "email": "tom.wilson@security.corp.com",
+    "phone": "+1-555-0205",
+    "escalation_level": 1,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": true
+    },
+    "notification_preference": "pagerduty",
+    "approval_authority": "security_patch",
+    "Systems": [
+      "iam_service",
+      "audit_log_service",
+      "hashids-java"
+    ]
+  },
+  {
+    "owner_id": "OWN-206",
+    "name": "Yuki Tanaka",
+    "role": "Application Owner",
+    "department": "Customer Apps",
+    "email": "yuki.tanaka@apps.corp.com",
+    "phone": "+81-3-5555-0206",
+    "escalation_level": 2,
+    "backup_owner": "OWN-207",
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "deploy_approve",
+    "Systems": [
+      "customer_portal",
+      "mybatis-3"
+    ]
+  },
+  {
+    "owner_id": "OWN-207",
+    "name": "Daniel Mueller",
+    "role": "Backend Lead",
+    "department": "Customer Apps",
+    "email": "daniel.mueller@apps.corp.com",
+    "phone": "+49-30-5555-0207",
+    "escalation_level": 2,
+    "backup_owner": "OWN-206",
+    "oncall_schedule": {
+      "this_week": true
+    },
+    "notification_preference": "slack",
+    "approval_authority": "deploy_approve",
+    "Systems": [
+      "order_service",
+      "billing_adapter",
+      "netty-websocket-spring-boot-starter"
+    ]
+  },
+  {
+    "owner_id": "OWN-208",
+    "name": "Grace Lee",
+    "role": "Observability Lead",
+    "department": "Infra Ops",
+    "email": "grace.lee@infra.corp.com",
+    "phone": "+82-2-555-0208",
+    "escalation_level": 1,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "slack",
+    "approval_authority": "config_change",
+    "Systems": [
+      "metrics_pipeline",
+      "log_aggregation",
+      "android-GridViewWithHeaderAndFooter"
+    ]
+  },
+  {
+    "owner_id": "OWN-209",
+    "name": "Oliver Smith",
+    "role": "Release Manager",
+    "department": "Engineering Productivity",
+    "email": "oliver.smith@engprod.corp.com",
+    "phone": "+44-20-7946-0209",
+    "escalation_level": 2,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "release_gate",
+    "Systems": [
+      "ci_cd_pipeline",
+      "spotify-web-api-java"
+    ]
+  },
+  {
+    "owner_id": "OWN-210",
+    "name": "Aisha Khan",
+    "role": "ML Ops Lead",
+    "department": "AI Platform",
+    "email": "aisha.khan@ai.corp.com",
+    "phone": "+971-4-555-0210",
+    "escalation_level": 1,
+    "backup_owner": "OWN-204",
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "slack",
+    "approval_authority": "model_ops",
+    "Systems": [
+      "model_registry",
+      "inference_gateway",
+      "streamex"
+    ]
+  },
+  {
+    "owner_id": "OWN-211",
+    "name": "Carlos Mendes",
+    "role": "Integration Lead",
+    "department": "Enterprise Integration",
+    "email": "carlos.mendes@integration.corp.com",
+    "phone": "+351-21-555-0211",
+    "escalation_level": 2,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": true
+    },
+    "notification_preference": "email",
+    "approval_authority": "interface_change",
+    "Systems": [
+      "sap_connector",
+      "nlp-lang"
+    ]
+  },
+  {
+    "owner_id": "OWN-212",
+    "name": "Hannah White",
+    "role": "QA Lead",
+    "department": "Quality Engineering",
+    "email": "hannah.white@qe.corp.com",
+    "phone": "+1-555-0212",
+    "escalation_level": 3,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "test_signoff",
+    "Systems": [
+      "test_automation_service",
+      "httpclientutil"
+    ]
+  },
+  {
+    "owner_id": "OWN-213",
+    "name": "Ivan Petrov",
+    "role": "Database Owner",
+    "department": "Data Platform",
+    "email": "ivan.petrov@data.corp.com",
+    "phone": "+7-495-555-0213",
+    "escalation_level": 1,
+    "backup_owner": "OWN-203",
+    "oncall_schedule": {
+      "this_week": true
+    },
+    "notification_preference": "pagerduty",
+    "approval_authority": "db_change",
+    "Systems": [
+      "postgres_cluster",
+      "best-pay-sdk"
+    ]
+  },
+  {
+    "owner_id": "OWN-214",
+    "name": "Wei Zhang",
+    "role": "Search Platform Owner",
+    "department": "Search",
+    "email": "wei.zhang@search.corp.com",
+    "phone": "+86-10-5555-0214",
+    "escalation_level": 1,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "slack",
+    "approval_authority": "index_release",
+    "Systems": [
+      "search_index",
+      "ranking_service",
+      "jnr-ffi"
+    ]
+  },
+  {
+    "owner_id": "OWN-215",
+    "name": "Emma Rossi",
+    "role": "Frontend Lead",
+    "department": "Customer Apps",
+    "email": "emma.rossi@apps.corp.com",
+    "phone": "+39-06-5555-0215",
+    "escalation_level": 2,
+    "backup_owner": "OWN-206",
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "ui_release",
+    "Systems": [
+      "web_frontend",
+      "ik-analyzer-solr"
+    ]
+  },
+  {
+    "owner_id": "OWN-216",
+    "name": "Noah Kim",
+    "role": "Auth Service Owner",
+    "department": "Security",
+    "email": "noah.kim@security.corp.com",
+    "phone": "+82-2-555-0216",
+    "escalation_level": 1,
+    "backup_owner": "OWN-205",
+    "oncall_schedule": {
+      "this_week": true
+    },
+    "notification_preference": "pagerduty",
+    "approval_authority": "security_patch",
+    "Systems": [
+      "auth_service",
+      "emoji-java"
+    ]
+  },
+  {
+    "owner_id": "OWN-217",
+    "name": "Peter Novak",
+    "role": "Messaging Platform Owner",
+    "department": "Infra Services",
+    "email": "peter.novak@infra.corp.com",
+    "phone": "+420-2-555-0217",
+    "escalation_level": 1,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "slack",
+    "approval_authority": "broker_config",
+    "Systems": [
+      "kafka_cluster",
+      "SmartTube"
+    ]
+  },
+  {
+    "owner_id": "OWN-218",
+    "name": "Fatima Ali",
+    "role": "Compliance Lead",
+    "department": "Risk & Compliance",
+    "email": "fatima.ali@risk.corp.com",
+    "phone": "+971-2-555-0218",
+    "escalation_level": 3,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "compliance_approve",
+    "Systems": [
+      "javacpp"
+    ]
+  },
+  {
+    "owner_id": "OWN-219",
+    "name": "Lucas Brown",
+    "role": "Monitoring Owner",
+    "department": "Infra Ops",
+    "email": "lucas.brown@infra.corp.com",
+    "phone": "+1-555-0219",
+    "escalation_level": 1,
+    "backup_owner": "OWN-208",
+    "oncall_schedule": {
+      "this_week": true
+    },
+    "notification_preference": "slack",
+    "approval_authority": "alert_policy",
+    "Systems": [
+      "alert_manager",
+      "sensitive-word"
+    ]
+  },
+  {
+    "owner_id": "OWN-220",
+    "name": "Anna Svensson",
+    "role": "Storage Platform Lead",
+    "department": "Infra Services",
+    "email": "anna.svensson@infra.corp.com",
+    "phone": "+46-8-555-0220",
+    "escalation_level": 1,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "slack",
+    "approval_authority": "storage_change",
+    "Systems": [
+      "object_storage",
+      "proxyee"
+    ]
+  },
+  {
+    "owner_id": "OWN-221",
+    "name": "Diego Ramirez",
+    "role": "API Product Owner",
+    "department": "Digital Platform",
+    "email": "diego.ramirez@digital.corp.com",
+    "phone": "+52-55-555-0221",
+    "escalation_level": 2,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "api_contract",
+    "Systems": [
+      "public_api",
+      "aliyun-oss-java-sdk"
+    ]
+  },
+  {
+    "owner_id": "OWN-222",
+    "name": "Samantha Green",
+    "role": "Reporting Lead",
+    "department": "Business Intelligence",
+    "email": "samantha.green@bi.corp.com",
+    "phone": "+1-555-0222",
+    "escalation_level": 2,
+    "backup_owner": "OWN-203",
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "report_release",
+    "Systems": [
+      "bi_reporting",
+      "jsoup"
+    ]
+  },
+  {
+    "owner_id": "OWN-223",
+    "name": "Ahmed Hassan",
+    "role": "Streaming Platform Owner",
+    "department": "Data Platform",
+    "email": "ahmed.hassan@data.corp.com",
+    "phone": "+20-2-555-0223",
+    "escalation_level": 1,
+    "backup_owner": "OWN-217",
+    "oncall_schedule": {
+      "this_week": true
+    },
+    "notification_preference": "pagerduty",
+    "approval_authority": "stream_config",
+    "Systems": [
+      "event_streaming",
+      "JavaVerbalExpressions"
+    ]
+  },
+  {
+    "owner_id": "OWN-224",
+    "name": "Julia Fischer",
+    "role": "ERP Owner",
+    "department": "Enterprise Systems",
+    "email": "julia.fischer@enterprise.corp.com",
+    "phone": "+49-89-555-0224",
+    "escalation_level": 2,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "erp_change",
+    "Systems": [
+      "erp_core",
+      "thumbnailator"
+    ]
+  },
+  {
+    "owner_id": "OWN-225",
+    "name": "Ben Taylor",
+    "role": "Network Lead",
+    "department": "Infra Ops",
+    "email": "ben.taylor@infra.corp.com",
+    "phone": "+1-555-0225",
+    "escalation_level": 1,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": true
+    },
+    "notification_preference": "pagerduty",
+    "approval_authority": "network_change",
+    "Systems": [
+      "network_fabric",
+      "classgraph"
+    ]
+  },
+  {
+    "owner_id": "OWN-226",
+    "name": "Keiko Sato",
+    "role": "Mobile Platform Owner",
+    "department": "Customer Apps",
+    "email": "keiko.sato@apps.corp.com",
+    "phone": "+81-3-5555-0226",
+    "escalation_level": 2,
+    "backup_owner": "OWN-215",
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "mobile_release",
+    "Systems": [
+      "mobile_backend",
+      "datafaker"
+    ]
+  },
+  {
+    "owner_id": "OWN-227",
+    "name": "Victor Hugo",
+    "role": "Content Platform Owner",
+    "department": "Digital Media",
+    "email": "victor.hugo@media.corp.com",
+    "phone": "+33-1-555-0227",
+    "escalation_level": 2,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "content_release",
+    "Systems": [
+      "cms_service",
+      "java-telegram-bot-api"
+    ]
+  },
+  {
+    "owner_id": "OWN-228",
+    "name": "Natalie Cooper",
+    "role": "Experimentation Lead",
+    "department": "Growth Platform",
+    "email": "natalie.cooper@growth.corp.com",
+    "phone": "+1-555-0228",
+    "escalation_level": 3,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "experiment_approve",
+    "Systems": [
+      "ab_testing",
+      "pinyin4j"
+    ]
+  },
+  {
+    "owner_id": "OWN-229",
+    "name": "Sergey Ivanov",
+    "role": "Cache Platform Owner",
+    "department": "Infra Services",
+    "email": "sergey.ivanov@infra.corp.com",
+    "phone": "+7-812-555-0229",
+    "escalation_level": 1,
+    "backup_owner": "OWN-217",
+    "oncall_schedule": {
+      "this_week": true
+    },
+    "notification_preference": "pagerduty",
+    "approval_authority": "cache_config",
+    "Systems": [
+      "redis_cluster",
+      "picocli"
+    ]
+  },
+  {
+    "owner_id": "OWN-230",
+    "name": "Laura Martinez",
+    "role": "Notification Service Owner",
+    "department": "Shared Services",
+    "email": "laura.martinez@shared.corp.com",
+    "phone": "+34-91-555-0230",
+    "escalation_level": 2,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "template_change",
+    "Systems": [
+      "notification_service",
+      "jcasbin"
+    ]
+  },
+  {
+    "owner_id": "OWN-231",
+    "name": "James Anderson",
+    "role": "Billing Platform Lead",
+    "department": "Finance IT",
+    "email": "james.anderson@finance.corp.com",
+    "phone": "+1-555-0231",
+    "escalation_level": 1,
+    "backup_owner": "OWN-224",
+    "oncall_schedule": {
+      "this_week": true
+    },
+    "notification_preference": "slack",
+    "approval_authority": "billing_change",
+    "Systems": [
+      "billing_core",
+      "alipay-easysdk"
+    ]
+  },
+  {
+    "owner_id": "OWN-232",
+    "name": "Chloe Dubois",
+    "role": "Fraud Detection Owner",
+    "department": "Risk Platform",
+    "email": "chloe.dubois@risk.corp.com",
+    "phone": "+33-1-555-0232",
+    "escalation_level": 1,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": true
+    },
+    "notification_preference": "pagerduty",
+    "approval_authority": "fraud_rule",
+    "Systems": [
+      "fraud_engine",
+      "graceful-response"
+    ]
+  },
+  {
+    "owner_id": "OWN-233",
+    "name": "Markus Keller",
+    "role": "Scheduler Service Owner",
+    "department": "Infra Services",
+    "email": "markus.keller@infra.corp.com",
+    "phone": "+41-44-555-0233",
+    "escalation_level": 2,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "slack",
+    "approval_authority": "job_config",
+    "Systems": [
+      "job_scheduler",
+      "PCAPdroid"
+    ]
+  },
+  {
+    "owner_id": "OWN-234",
+    "name": "Priya Nair",
+    "role": "Workflow Platform Lead",
+    "department": "Automation",
+    "email": "priya.nair@automation.corp.com",
+    "phone": "+91-80-555-0234",
+    "escalation_level": 1,
+    "backup_owner": "OWN-233",
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "slack",
+    "approval_authority": "workflow_change",
+    "Systems": [
+      "workflow_engine",
+      "gecco"
+    ]
+  },
+  {
+    "owner_id": "OWN-235",
+    "name": "Ethan Moore",
+    "role": "Search Relevance Lead",
+    "department": "Search",
+    "email": "ethan.moore@search.corp.com",
+    "phone": "+1-555-0235",
+    "escalation_level": 2,
+    "backup_owner": "OWN-214",
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "ranking_change",
+    "Systems": [
+      "ranking_model",
+      "gitlab4j-api"
+    ]
+  },
+  {
+    "owner_id": "OWN-236",
+    "name": "Nina Kowalski",
+    "role": "Data Quality Owner",
+    "department": "Data Platform",
+    "email": "nina.kowalski@data.corp.com",
+    "phone": "+48-22-555-0236",
+    "escalation_level": 3,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "dq_rule",
+    "Systems": [
+      "data_quality_service",
+      "jOOL"
+    ]
+  },
+  {
+    "owner_id": "OWN-237",
+    "name": "Roberto Silva",
+    "role": "Payments Owner",
+    "department": "Finance IT",
+    "email": "roberto.silva@finance.corp.com",
+    "phone": "+55-11-555-0237",
+    "escalation_level": 1,
+    "backup_owner": "OWN-231",
+    "oncall_schedule": {
+      "this_week": true
+    },
+    "notification_preference": "pagerduty",
+    "approval_authority": "payment_release",
+    "Systems": [
+      "payment_gateway",
+      "sofa-bolt"
+    ]
+  },
+  {
+    "owner_id": "OWN-238",
+    "name": "Megan O'Connor",
+    "role": "Customer Support Systems Lead",
+    "department": "Support IT",
+    "email": "megan.oconnor@support.corp.com",
+    "phone": "+353-1-555-0238",
+    "escalation_level": 2,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "support_tool",
+    "Systems": [
+      "ticketing_system",
+      "joda-time"
+    ]
+  },
+  {
+    "owner_id": "OWN-239",
+    "name": "Andrei Popescu",
+    "role": "Identity Federation Owner",
+    "department": "Security",
+    "email": "andrei.popescu@security.corp.com",
+    "phone": "+40-21-555-0239",
+    "escalation_level": 1,
+    "backup_owner": "OWN-216",
+    "oncall_schedule": {
+      "this_week": true
+    },
+    "notification_preference": "pagerduty",
+    "approval_authority": "identity_change",
+    "Systems": [
+      "sso_federation",
+      "ansj_seg"
+    ]
+  },
+  {
+    "owner_id": "OWN-240",
+    "name": "Isabella Moretti",
+    "role": "Document Platform Owner",
+    "department": "Enterprise Systems",
+    "email": "isabella.moretti@enterprise.corp.com",
+    "phone": "+39-02-555-0240",
+    "escalation_level": 2,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "doc_template",
+    "Systems": [
+      "document_service",
+      "spark"
+    ]
+  },
+  {
+    "owner_id": "OWN-241",
+    "name": "Samuel Wright",
+    "role": "Feature Flag Owner",
+    "department": "Engineering Productivity",
+    "email": "samuel.wright@engprod.corp.com",
+    "phone": "+1-555-0241",
+    "escalation_level": 3,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "flag_change",
+    "Systems": [
+      "feature_flag_service",
+      "weixin-popular"
+    ]
+  },
+  {
+    "owner_id": "OWN-242",
+    "name": "Helena Costa",
+    "role": "Localization Platform Lead",
+    "department": "Internationalization",
+    "email": "helena.costa@i18n.corp.com",
+    "phone": "+351-21-555-0242",
+    "escalation_level": 2,
+    "backup_owner": null,
+    "oncall_schedule": {
+      "this_week": false
+    },
+    "notification_preference": "email",
+    "approval_authority": "locale_release",
+    "Systems": [
+      "localization_service",
+      "metadata-extractor"
+    ]
+  },
+  {
+    "owner_id": "OWN-243",
+    "name": "John Miller",
+    "role": "Email Infrastructure Owner",
+    "department": "Shared Services",
+    "email": "john.miller@shared.corp.com",
+    "phone": "+1-555-0243",
+    "escalation_level": 1,
+    "backup_owner": "OWN-230",
+    "oncall_schedule": {
+      "this_week": true
+    },
+    "notification_preference": "pagerduty",
+    "approval_authority": "mail_config",
+    "Systems": [
+      "email_gateway",
+      "jdonframework"
+    ]
+  }
+]

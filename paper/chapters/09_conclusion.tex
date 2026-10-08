@@ -1,0 +1,14 @@
+\section{Conclusion}
+
+Multi-agent systems increasingly rely on protocols such as MCP and A2A.
+However, current approaches tend to expose execution-level details directly into the agent's planning context. 
+This forces agents to reason simultaneously about task semantics and protocol mechanics, increasing token consumption, latency, and failure rates.
+
+In this work, we formalize this as a problem of poorly staged information exposure and address it with a unified capability gateway that abstracts over both tools and peer agents. 
+The gateway keeps planning focused on semantic capability information and delays execution-specific details until they are actually needed.
+Our empirical evaluation showed that the gateway architecture consistently improves token efficiency, latency, and task success. 
+The retrieval-based gateway variant becomes especially useful as the environment grows, preventing irrelevant information from entering the context window.
+
+Taken together, these results suggest that future agent systems should be designed around staged information exposure rather than upfront capability dumping.
+The gateway architecture reinforces this principle while additionally providing a central point for configuration and governance across protocols.
+As multi-agent ecosystems continue to grow, this separation should become increasingly important for building reliable and scalable systems.

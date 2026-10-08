@@ -1,0 +1,102 @@
+Contact Data Handling Policy (Read-Only Reference)
+
+Purpose
+- Define safe handling standards for routing contact data in automation flows.
+- Reduce privacy risk and accidental disclosure of personal identifiers.
+- Align retention, logging, and access rules across systems.
+
+What this tool does
+- Returns a static policy for contact data handling.
+- Does not validate contacts against directories.
+- Does not retrieve or mutate contact records.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Data classes
+- team routing identifiers.
+- individual contact identifiers.
+- escalation contact chains.
+- channel membership metadata.
+- source provenance metadata.
+
+Policy principles
+- minimize personal data collection.
+- enforce least-privilege access.
+- limit usage to declared operational purposes.
+- preserve auditability of access and changes.
+
+Storage requirements
+- keep contact data in dedicated protected stores.
+- track source_of_truth for each record.
+- record last_verified_utc and last_updated_utc.
+- prefer team ids over personal addresses when possible.
+
+Transmission rules
+- avoid putting contact data into URLs.
+- restrict recipient fan-out to needed scope.
+- avoid exposing full recipient lists unnecessarily.
+- dispatch only fields required by destination channel.
+
+Logging rules
+- do not log full mailbox addresses at INFO level.
+- do not log phone numbers in clear text.
+- prefer hashed or redacted recipient tokens.
+- include stable team ids for troubleshooting.
+
+Redaction examples
+- alice@example.com -> a***@example.com.
+- +1-415-555-0188 -> **********88.
+- chat:user-alice -> chat:u***.
+
+Retention policy
+- retain raw contact payloads only for audit necessity.
+- apply shorter retention to logs containing personal fields.
+- remove stale or invalid contact records proactively.
+- support deletion workflows per governance requirements.
+
+Access control
+- define role-based access profiles.
+- require break-glass justification for broad exports.
+- rotate credentials used for contact integrations.
+- audit privileged reads and bulk operations.
+
+Incident response
+1) restrict access to exposed datasets immediately.
+2) rotate related credentials and integration tokens.
+3) identify affected recipients and systems.
+4) notify stakeholders per incident protocol.
+5) implement preventive controls before closure.
+
+Schema suggestion
+{
+  "steward_id": "string",
+  "steward_type": "team|individual",
+  "primary_contact": "string|null",
+  "secondary_contacts": ["string"],
+  "routing_group": "string|null",
+  "source_of_truth": "string",
+  "last_verified_utc": "string|null",
+  "last_updated_utc": "string"
+}
+
+Compliance checks
+- all records include source_of_truth.
+- stale contacts exceed threshold are flagged.
+- export events have requester identity.
+- redaction rules pass pre-release tests.
+
+Common anti-patterns
+- using personal mailboxes as immutable steward ids.
+- duplicating contact stores without synchronization policy.
+- retaining old contact snapshots indefinitely.
+- logging full contact payloads in debug dumps.
+
+Appendix: Required audit fields
+- record_id
+- actor_id
+- operation
+- timestamp_utc
+- purpose_code
+- data_classification

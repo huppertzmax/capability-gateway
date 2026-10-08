@@ -1,0 +1,20 @@
+\section{Future Work}
+
+A next step is to introduce finer-grained intermediate architectures between our simple baselines and the full gateway setup. 
+Our current comparison involves a relatively large architectural step, which makes it harder to attribute the observed gains to any single design choice. 
+Future work should therefore minimize framework-specific differences between the two architecture families and introduce incremental variants that isolate individual success drivers more precisely.
+
+At the same time, the gateway requires deeper investigation of its security properties before it can be considered for industry deployment. 
+As protocol-based agent systems grow in scope, authentication, attack resistance, and trust boundaries become critical concerns that should be addressed as part of future gateway research.
+
+Our evaluation also revealed the lack of a standardized benchmark for multi-agent systems that operate across multiple protocols. 
+Existing benchmarks focus primarily on MCP tool retrieval~\cite{mo2026livemcpbench, luo2025mcpuniverse}, which does not capture the coordination and protocol-switching demands of gateway-based setups. 
+We therefore had to design our own task environment to evaluate the different pipeline architectures. 
+A dedicated multi-protocol benchmark would benefit future research in this area considerably.
+
+On the system side, the gateway could be extended with more specialized retrieval methods.
+Prior work already explores promising tool-retrieval strategies~\cite{gaurav2025dynamicreact, fei2025mcpzero, gan2025ragmcp, lumer2025tooltoagent, lumer2025scalemcp}.
+Recent work also shows that specialized retrieval models can improve tool retrieval further~\cite{lu2025toolsunderdocumented}.
+
+Finally, our token consumption metric currently suffers from excessive upstream token usage caused by results being passed back through the whole agent chain without contributing additional value. 
+Future work should investigate strategies to reduce this overhead, as it inflates measured costs in multi-agent pipelines like ours and limits the scalability of deeper delegation chains.

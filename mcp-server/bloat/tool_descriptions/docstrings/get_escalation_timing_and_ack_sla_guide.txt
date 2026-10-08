@@ -1,0 +1,101 @@
+Escalation Timing and Acknowledgment SLA Guide (Read-Only Reference)
+
+Purpose
+- Define time-bound escalation and acknowledgment expectations for operational bulletins.
+- Ensure consistent response behavior across teams and severities.
+- Support measurable service levels with clear accountability.
+
+What this tool does
+- Returns a static guide for escalation timing and acknowledgment SLAs.
+- Does not page responders or monitor live acknowledgments.
+- Does not mutate on-call schedules.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+SLA principles
+- deadlines must be explicit and timezone-safe.
+- severity determines required acknowledgment speed.
+- escalation must be deterministic, not discretionary.
+- missed SLAs trigger follow-up and reporting.
+
+Severity tiers
+- Sev-0: critical production outage or safety-impacting event.
+- Sev-1: major degradation with high business impact.
+- Sev-2: moderate impact requiring planned response.
+- Sev-3: low impact informational event.
+
+Acknowledgment targets
+- Sev-0: acknowledge within 5 minutes.
+- Sev-1: acknowledge within 15 minutes.
+- Sev-2: acknowledge within 60 minutes.
+- Sev-3: acknowledge within 1 business day.
+
+Escalation ladder
+1) primary steward bulletin.
+2) backup steward bulletin.
+3) team on-call lead.
+4) incident commander or duty manager.
+5) executive duty channel for prolonged critical impact.
+
+Escalation timing defaults
+- Sev-0: escalate every 5 minutes until acknowledged.
+- Sev-1: escalate every 15 minutes.
+- Sev-2: escalate every 60 minutes.
+- Sev-3: no automatic ladder unless policy override exists.
+
+Acknowledgment semantics
+- acknowledgment means responder confirmed stewardship of next action.
+- read receipts alone are not acknowledgment.
+- automation acknowledgments require service account labeling.
+- handoff must preserve stewardship continuity.
+
+Tracking payload
+{
+  "event_id": "string",
+  "severity": "sev0|sev1|sev2|sev3",
+  "first_sent_utc": "string",
+  "ack_deadline_utc": "string",
+  "ack_received_utc": "string|null",
+  "current_escalation_level": 0,
+  "steward": "string|null"
+}
+
+SLA breach handling
+- flag breach in incident timeline.
+- notify escalation manager automatically.
+- capture root cause category for missed acknowledgment.
+- create corrective action item with steward and due date.
+
+Timezone and calendar rules
+- store and evaluate all deadlines in UTC.
+- optionally display local time for recipients.
+- document business-hours exceptions explicitly.
+- avoid ambiguous terms like "end of day".
+
+Operational controls
+- test escalation pipelines weekly.
+- validate contact freshness for escalation chain.
+- protect against duplicate pages from parallel systems.
+- simulate missed-ack scenarios in drills.
+
+Common anti-patterns
+- severity inflation to force fast responses.
+- unclear stewardship after first acknowledgment.
+- silent suppression of escalation events.
+- inconsistent SLA definitions across tools.
+
+Metrics
+- acknowledgment latency by severity.
+- breach rate by team and channel.
+- escalation depth before acknowledgment.
+- false escalation rate.
+- mean time to assign accountable steward.
+
+Appendix: Breach reason codes
+- CONTACT_STALE
+- CHANNEL_FAILURE
+- LOAD_SPIKE
+- STEWARDSHIP_GAP
+- PROCESS_NONCOMPLIANCE

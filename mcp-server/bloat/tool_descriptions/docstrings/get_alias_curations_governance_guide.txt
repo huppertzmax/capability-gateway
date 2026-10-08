@@ -1,0 +1,102 @@
+Alias Curation Governance Guide (Read-Only Reference)
+
+Purpose
+- Define governance for maintaining alias mappings between equivalent component names.
+- Prevent uncontrolled alias growth that creates false merges and hidden coupling.
+- Provide review and lifecycle rules for safe alias curation.
+
+What this tool does
+- Returns a static governance guide for alias curation.
+- Does not create or delete aliases in any system.
+- Does not validate aliases against live registries.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Alias model
+- canonical_id: authoritative component identity.
+- alias_value: alternate spelling or legacy identifier.
+- alias_type: legacy_name, vendor_name, migration_name, short_name.
+- status: proposed, approved, deprecated, retired.
+
+Governance principles
+- aliases are additive metadata, never replacement truth.
+- every alias requires explicit provenance.
+- aliases must have owning team and review cadence.
+- high-impact aliases require dual approval.
+
+Lifecycle stages
+1) proposal with evidence.
+2) validation against known conflicts.
+3) approval by designated reviewers.
+4) publication to resolver tables.
+5) periodic revalidation and eventual retirement.
+
+Proposal requirements
+- proposed canonical_id.
+- proposed alias_value.
+- source references.
+- expected impact scope.
+- steward and review_due_utc.
+
+Validation checks
+- alias does not already map to different canonical_id.
+- alias is not overly generic.
+- alias casing and punctuation normalization is documented.
+- backward compatibility impact is assessed.
+
+Approval policy
+- low-impact aliases require one domain reviewer.
+- cross-domain aliases require two reviewers from different teams.
+- high-risk aliases require architecture steward sign-off.
+- emergency aliases require retroactive review within 48 hours.
+
+Alias record shape
+{
+  "alias_id": "string",
+  "canonical_id": "string",
+  "alias_value": "string",
+  "alias_type": "string",
+  "status": "proposed|approved|deprecated|retired",
+  "steward": "string",
+  "provenance": ["string"],
+  "review_due_utc": "string"
+}
+
+Deprecation and retirement
+- mark deprecated when alias is no longer preferred.
+- keep deprecated aliases for controlled transition windows.
+- retire aliases after usage drops and stakeholders confirm.
+- never hard-delete without audit retention policy.
+
+Conflict handling
+- conflicting aliases are frozen from auto-merge workflows.
+- route unresolved conflicts to governance review board.
+- publish conflict decision with reason codes.
+- run backfill impact analysis before re-enabling alias.
+
+Audit and compliance
+- preserve full change history of alias records.
+- log approver identity and timestamp for each transition.
+- maintain monthly report of high-impact alias changes.
+- sample retired aliases for accidental regressions.
+
+Operational metrics
+- alias approval lead time.
+- alias conflict rate.
+- false-merge incidents tied to alias mappings.
+- stale alias percentage beyond review_due_utc.
+
+Common anti-patterns
+- approving aliases without provenance.
+- allowing wildcard aliases for convenience.
+- mapping one alias to multiple canonical ids.
+- skipping periodic revalidation.
+
+Appendix: Suggested reason codes
+- LEGACY_RENAME
+- VENDOR_BRANDING_VARIANT
+- ECOSYSTEM_NAMING_DIFFERENCE
+- TYPO_CORRECTION
+- DEPRECATION_COMPLETED

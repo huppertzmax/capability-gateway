@@ -1,0 +1,23 @@
+{
+    "name": "Notification Crew",
+    "agents": [
+        {
+            "id": "notification_agent",
+            "role": "Security Notification Agent",
+            "goal": "Using the send_security_email_notification MCP tool, send out the correct notifications given the inputted vulnerability information, affected system and responsible owner. Keep your final response concise and to the point - brief summaries only, no verbose explanations. Make sure that the correct owners get notifications! You might receive multiple vulnerabilities (multiple unique GHSA IDs with information, affected system and responsible owner) at once, you must send out individual notifications for all of them.",
+            "backstory": "Purpose-built security notification agent that receives structured hand-offs from the Matcher Agent (owners, systems, affected packages, severity). Sends structured email notifications to system owners about vulnerabilities affecting their systems using the MCP notification tool. Ensures correct owners receive timely alerts with all necessary information. Keeps notifications concise, actionable, and consistent.",
+            "a2a": false,
+            "mcp": true
+        }
+    ],
+    "tasks": [
+        {
+            "name": "notification_generator_task",
+            "agent": "notification_agent",
+      "description": "Input from Matcher Agent: {query}. Steps: 1) Parse the GHSA id, severity, affected systems/packages, package versions, vulnerable version ranges, and responsible owners. 2) For each unique vulnerability (unique GHSA ID), call send_security_email_notification MCP tool ONCE with these structured, REQUIRED parameters: owner_email, owner_name, affected_systems as list of system names, package_name (Maven fixed format `groupId:artifactId`, e.g. `com.alibaba:fastjson`), package_version, ghsa_id, vulnerable_range_start, vulnerable_range_end. IMPORTANT: Missing/unknown values MUST be JSON null (not 0, not \"null\", not empty strings). Range semantics: start is OSV \"introduced\" (null only if introduced=0); end is the first OSV \"fixed\" version (do not use last affected). 3) If multiple vulnerabilities (multiple GHSA IDs) are provided, send individual notifications for each one (batch tool calls in one step if supported; never send duplicates). 4) If no affected owners exist, skip tool calls and output one clear line explaining why. 5) Return a brief summary of all the notifications that were successfully sent out. Keep it brief - 1-2 sentences maximum.",
+            "expected_output": "Brief summary listing all notifications sent: 'Notifications sent for N owners: <names>' or 'No notifications sent: <reason>'. Minimal sanitization; do not change meaning. If a needed capability is missing or fails, state it briefly."
+        }
+    ],
+    "process": "sequential",
+    "tracing": true
+}

@@ -1,0 +1,100 @@
+On-Call Handoff Communication Checklist (Read-Only Reference)
+
+Purpose
+- Define a rigorous checklist for shift handoffs between on-call responders.
+- Reduce loss of operational context across timezone or schedule boundaries.
+- Improve continuity for unresolved incidents and pending actions.
+
+What this tool does
+- Returns a static handoff communication checklist.
+- Does not dispatch handoff messages or schedule meetings.
+- Does not read current pager rotation state.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Handoff prerequisites
+- outgoing responder confirms active incident inventory.
+- outgoing responder verifies stewardship assignments are current.
+- incoming responder confirms channel access and escalation rights.
+- both responders use the same incident source of truth.
+
+Mandatory handoff sections
+- incident status summary.
+- current customer impact statement.
+- unresolved action list with stewards and deadlines.
+- known risks for next four hours.
+- explicit escalation conditions and thresholds.
+
+Incident status requirements
+- include current severity and last change timestamp.
+- include timeline of key events from previous shift.
+- include mitigation actions attempted and outcomes.
+- include blocked tasks with dependency details.
+
+Stewardship requirements
+- list primary steward for each open action.
+- list backup steward for high-severity actions.
+- confirm delegated tasks have acceptance acknowledgment.
+- record pending stewardship disputes explicitly.
+
+Risk communication requirements
+- state likely failure recurrence conditions.
+- state temporary safeguards and expiry times.
+- state monitoring blind spots and current workarounds.
+- state decision deadlines that may trigger escalation.
+
+Escalation guidance
+- identify escalation path by severity level.
+- include direct contact method for incident commander.
+- include decision authority boundaries for incoming responder.
+- include criteria for waking secondary teams overnight.
+
+Channel handoff minimums
+- chat handoff starts with incident id and severity marker.
+- pager annotation includes current customer-impact sentence.
+- mailbox summary subject includes explicit UTC handoff time.
+- incident ticket update links to latest timeline checkpoint.
+- voice handoff repeats escalation condition for severity one.
+
+Handoff message example
+{
+  "shift_end": "2026-03-02T06:00:00Z",
+  "service": "checkout-gateway",
+  "active_incidents": ["INC-24101"],
+  "severity": "SEV-2",
+  "customer_impact": "Intermittent payment retries in EU region",
+  "open_actions": [
+    "Verify queue drain after patch rollout",
+    "Confirm retry budget reset at 06:30 UTC"
+  ],
+  "known_risks": [
+    "Latency spike possible during cache rehydration"
+  ],
+  "escalate_if": "Error rate exceeds 4 percent for 10 minutes"
+}
+
+Checklist validation
+- each active incident has a current status line.
+- each open action has steward and due time.
+- each risk has an associated monitoring signal.
+- each escalation condition has measurable threshold.
+
+Common handoff failures
+- missing explicit next decision point.
+- ambiguous wording about mitigation completion.
+- omitting unresolved stakeholder communications.
+- assuming incoming responder knows prior context.
+
+Control recommendations
+- require checklist completion before shift close.
+- archive handoff artifacts with incident timeline.
+- run quarterly handoff drills using historical incidents.
+- audit random handoffs for completeness and clarity.
+
+Operational notes
+- adapt checklist language for low-bandwidth channels.
+- keep terminology consistent with incident command framework.
+- update checklist after major incident retrospectives.
+- align retention policy with compliance requirements.

@@ -1,0 +1,29 @@
+{
+    "name": "Matcher Crew",
+    "agents": [
+        {
+            "id": "matcher_agent",
+            "role": "SBOM CVE Impact Matcher",
+            "goal": "Using MCP tools, perform SBOM impact mapping and owner mapping. Execute get_sbom_data once to map vulnerable packages/versions to SBOM entries and identify affected systems. If systems are affected, execute get_system_owner_data once to map responsible owners, then delegate to the Notification Agent via A2A with concise vulnerability details, affected systems, and owner information. If no systems are affected, return a brief statement. Keep outputs concise (2-4 sentences max) and faithful - minimal sanitization.",
+            "backstory": "Purpose-built SBOM matcher that sits between the CVE Data Management Agent and the Notification Agent. Performs the data-heavy lifting: mapping vulnerabilities to systems and identifying responsible owners. Calls local MCP tools only once each and produces concise, structured hand-offs. Ensures downstream notification agent gets complete context only when systems are actually affected.",
+            "a2a": true,
+            "mcp": true
+        }
+    ],
+    "tasks": [
+        {
+            "name": "sbom_matching_task",
+            "agent": "matcher_agent",
+            "description": "Input from CVE Data Management Agent: {query}\n\nProtocol: Steps: 1) Parse the CVE id, packages, affected version ranges, and severity. 2) Call get_sbom_data MCP tool exactly once to load the SPDX JSON; no other tool calls in this task. 3) Compare the vulnerable packages/versions against the SBOM packages (names and purls). 4) For each system/product represented in the SBOM, list the affected packages with installed version and short reasoning (e.g., 'installed 1.2 falls within vulnerable <1.3'). 5) If nothing matches, state clearly that no systems are affected. Keep the output concise and machine-friendly for the next task.",
+            "expected_output": "Structured summary with CVE id, severity, and entries like: System -> [package@version, reason]. Include 'No systems affected' if nothing matches."
+        },
+        {
+            "name": "owner_mapping_task",
+            "agent": "matcher_agent",
+            "description": "Continue with the SBOM match results from the previous task. 1) Call get_system_owner_data MCP tool exactly once to load the owner directory JSON. 2) Map each affected system to its primary owner (include owner name and email) 3) If systems are affected, delegate to the Notification Agent via A2A with a concise natural-language handoff containing vulnerability details, affected systems, and owner information: owner contact + their systems + affected packages (with versions) + CVE id + severity. 4) If no systems are affected, return a brief statement that no systems are impacted. 5) Preserve any uncertainty or missing data explicitly; do not invent contacts. Keep outputs faithful with minimal sanitization. Return a concise summary: affected systems (if any), owners notified (if any), notification status. Keep it brief - 2-4 sentences maximum.",
+            "expected_output": "Concise summary: affected systems (if any), owners notified (if any), notification status. Brief - 2-4 sentences maximum. If systems affected, includes owner-grouped hand-off. If a needed capability is missing or fails, state it briefly."
+        }
+    ],
+    "process": "sequential",
+    "tracing": false
+}

@@ -1,0 +1,100 @@
+Acknowledgement Response Taxonomy (Read-Only Reference)
+
+Purpose
+- Standardize acknowledgement semantics for operational bulletins.
+- Distinguish true stewardship acceptance from passive message receipt.
+- Improve routing quality and follow-up automation reliability.
+
+What this tool does
+- Returns a static taxonomy for acknowledgement responses.
+- Does not ingest channel events or update incident state.
+- Does not dispatch reminders or escalation messages.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Core acknowledgement classes
+- Received: recipient confirms message was seen.
+- Accepted: recipient confirms responsibility for next action.
+- Delegated: recipient transferred responsibility to another steward.
+- Rejected: recipient explicitly declines responsibility.
+- Clarification requested: recipient needs additional context.
+
+Class semantics
+- Received has no stewardship transfer implications.
+- Accepted starts SLA tracking for assigned action.
+- Delegated requires explicit target and transfer timestamp.
+- Rejected requires reason code and fallback routing.
+- Clarification requested pauses SLA only within policy limit.
+
+Required metadata fields
+- response_class
+- responder_identity
+- response_timestamp_utc
+- target_incident_or_task_id
+- channel_origin
+- correlation_id
+
+Policy constraints
+- free-form acknowledgements must map to a known class.
+- ambiguous responses default to Clarification requested.
+- silent reactions such as emoji are never Accepted by default.
+- Delegated without target steward is treated as incomplete.
+
+Reason code catalog
+- Wrong stewardship scope.
+- Insufficient permissions.
+- Missing technical context.
+- Duplicate bulletin thread.
+
+Normalization examples
+- "seen" maps to Received.
+- "I will handle this" maps to Accepted.
+- "Please route to payments on-call" maps to Delegated.
+- "Not my service" maps to Rejected.
+
+Structured response example
+{
+  "bulletin_id": "notif-20260301-4471",
+  "response_class": "Accepted",
+  "responder": "sara.klein@example.com",
+  "timestamp": "2026-03-01T21:14:09Z",
+  "channel": "slack",
+  "correlation_id": "INC-23891",
+  "reason_code": null
+}
+
+SLA interaction rules
+- Received does not satisfy action acknowledgement SLA.
+- Accepted satisfies acknowledgement SLA immediately.
+- Delegated satisfies SLA only after target confirms Accepted.
+- Rejected triggers fallback routing within two minutes.
+- Clarification requested opens a context-request subtask.
+
+Escalation triggers
+- two consecutive Rejected responses in one routing chain.
+- Clarification requested unresolved beyond policy threshold.
+- Delegated loops between same two teams.
+- missing responder identity in high-severity incidents.
+
+Analytics recommendations
+- track response class distribution by channel.
+- measure median time to Accepted from first bulletin.
+- monitor reject reasons to improve stewardship maps.
+
+Common anti-patterns
+- treating receipt confirmations as stewardship acceptance.
+- overloading Rejected for temporary unavailability.
+- skipping reason codes in high-noise incidents.
+
+Control recommendations
+- maintain approved phrase map for auto-classification.
+- require structured forms for severity one incidents.
+- audit normalization drift every release cycle.
+- keep taxonomy version tied to response parsers.
+
+Operational notes
+- publish taxonomy updates with migration notes.
+- train on-call rotations on class semantics quarterly.
+- include taxonomy id in bulletin pipeline logs.

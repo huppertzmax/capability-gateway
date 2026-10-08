@@ -1,0 +1,98 @@
+Dependency Coordinate Style Guide (Read-Only Reference)
+
+Purpose
+- Define one canonical way to express dependency identity across logs, reports, and APIs.
+- Reduce matching errors caused by mixed separators, casing, and ad-hoc string formats.
+- Provide deterministic guidance that can be implemented in automated pipelines.
+
+What this tool does
+- Returns a static style guide for dependency coordinate normalization.
+- Does not resolve package names against external registries.
+- Does not infer missing metadata from network calls.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Coordinate model
+- ecosystem: package source family such as pypi, npm, maven, or deb.
+- namespace: optional scope token used by some ecosystems.
+- name: package identifier without version.
+- version: optional release selector represented as raw text.
+- qualifiers: optional key/value map for classifier-like metadata.
+
+Canonical JSON shape
+{
+  "ecosystem": "string",
+  "namespace": "string|null",
+  "name": "string",
+  "version": "string|null",
+  "qualifiers": {
+    "key": "value"
+  }
+}
+
+Normalization rules
+1) Trim leading and trailing whitespace from each text field.
+2) Lowercase ecosystem token.
+3) Keep name punctuation that is meaningful in the ecosystem.
+4) Lowercase namespace only when ecosystem semantics are case-insensitive.
+5) Preserve version string exactly after whitespace cleanup.
+6) Normalize qualifier keys to lowercase snake_case.
+7) Sort qualifier keys for deterministic serialization.
+8) Represent unknown namespace as null, not empty string.
+
+Compact rendering format
+- Pattern: <ecosystem>:<namespace>/<name>@<version>?k=v&k2=v2
+- Omit namespace segment when namespace is null.
+- Omit @<version> when version is null.
+- Omit query segment when qualifiers are empty.
+- Keep compact format for display; compare using canonical JSON.
+
+Validation checklist
+- ecosystem is non-empty and contains no whitespace.
+- name is non-empty and does not include reserved delimiter "@".
+- qualifier keys contain letters, numbers, or underscores only.
+- version is stored as text even if numeric-looking.
+- canonical object serializes consistently between runs.
+
+Examples
+Example A
+{
+  "ecosystem": "pypi",
+  "namespace": null,
+  "name": "requests",
+  "version": "2.32.3",
+  "qualifiers": {}
+}
+Compact: pypi:requests@2.32.3
+
+Example B
+{
+  "ecosystem": "maven",
+  "namespace": "org.example",
+  "name": "core-lib",
+  "version": "1.8.0",
+  "qualifiers": {
+    "classifier": "sources"
+  }
+}
+Compact: maven:org.example/core-lib@1.8.0?classifier=sources
+
+Comparison guidance
+- Compare canonical fields, not raw strings.
+- Treat null namespace and missing namespace as equivalent only by policy.
+- Compare qualifiers as maps after key sorting.
+- Keep raw input separately for forensic auditing.
+
+Common mistakes
+- Storing only one human-formatted coordinate string.
+- Removing punctuation that changes package meaning.
+- Mixing display rendering rules with matching logic.
+- Dropping qualifier information during persistence.
+
+Operational recommendations
+- Version control coordinate normalization rules.
+- Add regression fixtures for known edge cases.
+- Emit canonical hash for caching and dedupe workflows.
+- Log redacted coordinates when names may expose internal projects.

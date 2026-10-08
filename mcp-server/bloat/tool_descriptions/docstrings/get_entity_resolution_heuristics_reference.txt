@@ -1,0 +1,102 @@
+Entity Resolution Heuristics Reference (Read-Only Reference)
+
+Purpose
+- Provide deterministic heuristics for deciding whether two records refer to the same entity.
+- Improve recall without sacrificing precision through explicit scoring rules.
+- Capture evidence so every merge or split decision is auditable.
+
+What this tool does
+- Returns a static reference for heuristic entity resolution.
+- Does not execute matching against datasets.
+- Does not call external identity services.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Resolution pipeline
+1) Normalize source fields.
+2) Generate candidate pairs with blocking.
+3) Compute similarity features.
+4) Apply deterministic decision rules.
+5) Persist decision plus evidence.
+
+Normalization rules
+- trim whitespace on all textual identifiers.
+- normalize Unicode to NFKC where applicable.
+- lowercase case-insensitive fields by ecosystem policy.
+- preserve punctuation that carries semantic value.
+- split display names into stable tokens.
+
+Candidate blocking strategy
+- use identifier prefix keys when stable ids exist.
+- use host/domain keys for URL-backed entities.
+- use token-based keys from normalized names.
+- combine multiple blocks to improve recall.
+- record which block produced each candidate pair.
+
+Similarity features
+- identifier_exact: exact equality of stable identifiers.
+- url_exact: exact URL equality after normalization.
+- token_jaccard: set overlap for name tokens.
+- name_edit_similarity: normalized edit score.
+- namespace_match: binary signal for same namespace.
+
+Decision rules
+- merge when identifier_exact is true.
+- merge when url_exact is true and token_jaccard >= 0.8.
+- merge when token_jaccard >= 0.9 and edit_similarity >= 0.9.
+- route to review when strong features conflict.
+- no-merge when confidence is low or contradictory.
+
+Tie-breakers
+- prefer stable identifiers over name-only matches.
+- prefer candidates with matching namespace.
+- prefer higher token overlap with fewer edits.
+- prefer newer authoritative records when duplicates exist.
+
+Evidence payload
+{
+  "left_id": "string",
+  "right_id": "string",
+  "decision": "merge|no_merge|needs_review",
+  "confidence": "high|medium|low",
+  "rules_fired": ["string"],
+  "features": {
+    "identifier_exact": 0,
+    "url_exact": 0,
+    "token_jaccard": 0.0,
+    "edit_similarity": 0.0,
+    "namespace_match": 0
+  }
+}
+
+Review guidance
+- require human review for borderline pairs.
+- include feature values and normalization output in review UI.
+- capture reviewer overrides with reason codes.
+- feed approved overrides into regression test fixtures.
+
+Common false-merge drivers
+- short generic names with high token overlap.
+- copied URLs that point to umbrella landing pages.
+- stale alias mappings inherited from old systems.
+- block keys that over-group unrelated entities.
+
+Common false-split drivers
+- missing stable identifiers in one source.
+- minor punctuation or transliteration differences.
+- version suffixes embedded in names.
+- inconsistent namespace extraction.
+
+Quality metrics
+- precision and recall on labeled benchmark sets.
+- reviewer override rate by rule id.
+- unresolved review queue age.
+- percentage of decisions with complete evidence.
+
+Operational controls
+- version and publish rule sets explicitly.
+- test every rule update against golden datasets.
+- add kill switch for problematic rule deployments.
+- log decision summaries with run-scoped identifiers.

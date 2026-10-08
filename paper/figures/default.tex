@@ -1,0 +1,19 @@
+\begin{table}[ht]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\setlength{\tabcolsep}{7pt}
+
+\begin{tabular}{lcccc}
+\toprule    & Latency          & Tokens In       & Tokens Out      & Task Score \\
+\midrule
+Simple      & N/A              & N/A             & N/A             & N/A \\
+Simple-Crew & 270.01s          & 67.52k          & 52.24k          & 3.44\% \\
+Gateway     & \textbf{188.45s} & \textbf{61.51k} & \textbf{14.21k} & \textbf{93.18\%} \\
+Gateway-RAG & 223.04s          & 67.27k          & 15.50k          & 91.09\% \\
+\bottomrule
+\end{tabular}
+\label{fig:gpt-5}
+
+\vspace{4pt}
+\par\noindent\normalfont Evaluation Results for GPT-5\par
+\end{table}

@@ -1,0 +1,103 @@
+Supply Chain Signal Triage Playbook (Read-Only Reference)
+
+Purpose
+- Describe how incoming dependency-related signals are triaged consistently.
+- Reduce alert fatigue while preserving fast response to high-impact events.
+- Align analysts, service stewards, and incident responders on one playbook.
+
+What this tool does
+- Returns a static triage playbook for dependency supply chain signals.
+- Does not pull live events from scanners or registries.
+- Does not auto-create incidents or tickets.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Signal categories
+- risk advisory advisory.
+- package takeover suspicion.
+- malicious release indicator.
+- integrity mismatch in artifact metadata.
+- license or policy compliance drift.
+
+Triage objectives
+- determine urgency quickly.
+- identify affected internal assets.
+- route to correct steward without delay.
+- preserve evidence for audit and forensics.
+
+Severity buckets
+- Sev-0: active exploitation or confirmed malicious artifact.
+- Sev-1: high-likelihood exploit with critical blast radius.
+- Sev-2: important issue requiring planned mitigation.
+- Sev-3: informational or low-impact signal.
+
+Initial triage steps
+1) Validate signal authenticity and source trust level.
+2) De-duplicate against existing open cases.
+3) Map signal to normalized dependency coordinate.
+4) Determine affected production and non-production assets.
+5) Assign preliminary severity and confidence.
+
+Routing rules
+- Sev-0 and Sev-1 route to incident commander immediately.
+- Signals without steward route to security intake plus platform on-call.
+- License-only signals route to compliance steward unless operational risk exists.
+- Ambiguous stewardship triggers a parallel identity resolution workflow.
+
+Evidence checklist
+- signal_id and provider.
+- timestamp and ingestion path.
+- dependency coordinate and version range.
+- affected services and environment scope.
+- supporting links or hashes.
+- analyst notes and confidence score.
+
+Containment actions
+- pin to known-good versions when possible.
+- block affected versions in artifact proxies.
+- isolate workloads with compromised dependencies.
+- increase monitoring and anomaly detection thresholds.
+
+Communication protocol
+- summarize impact and immediate actions in first update.
+- include explicit UTC timestamps for deadlines.
+- avoid disclosing sensitive exploit details in broad channels.
+- dispatch periodic status updates until closure.
+
+Escalation triggers
+- unresolved Sev-1 longer than 2 hours.
+- unresolved Sev-0 longer than 30 minutes.
+- evidence of lateral spread across multiple services.
+- missing steward for critical dependency path.
+
+Closure criteria
+- mitigation applied or accepted risk documented.
+- affected stakeholders acknowledged resolution.
+- post-incident follow-up tasks created with stewards.
+- case artifacts stored in long-term evidence repository.
+
+Case schema
+{
+  "case_id": "string",
+  "signal_type": "string",
+  "severity": "sev0|sev1|sev2|sev3",
+  "confidence": "high|medium|low",
+  "dependency": "string",
+  "affected_assets": ["string"],
+  "steward": "string|null",
+  "status": "open|mitigating|closed"
+}
+
+Common anti-patterns
+- treating all scanner alerts as equally urgent.
+- skipping dedupe and creating fragmented responses.
+- delaying routing while waiting for perfect certainty.
+- closing cases without evidence completeness review.
+
+Quality metrics
+- median time to triage.
+- median time to steward assignment.
+- false positive rate by signal source.
+- repeat incident rate for same dependency.

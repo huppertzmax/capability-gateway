@@ -1,0 +1,37 @@
+{
+    "name": "OSV Data Gathering Crew",
+    "agents": [
+        {
+            "id": "osv_summary_agent",
+            "role": "OSV Data Gather Agent",
+            "goal": "Fetch OSV vulnerability data for ALL provided GHSA identifiers using the get_osv_vulnerability_data MCP tool for each ID and create a short final response with key vulnerability data that you pass on to the next Agent. Do not call the tool again for the same ID, only for the next one.",
+            "backstory": "OSV data gathering specialist that fetches vulnerability information from OSV API and creates concise, actionable summaries for downstream agents.",
+            "mcp": true,
+            "a2a": false
+        },
+        {
+            "id": "coordination_agent",
+            "role": "CVE Data Coordination Agent",
+            "goal": "Given the vulnerability summary, delegate it as-is to the Matcher Agent via A2A (Agent to Agent protocol) using a single A2A call. After delegation completes, immediately provide your final answer with the downstream results—do not call A2A again.",
+            "backstory": "A2A communication specialist, delegating vulnerability information downstream for SBOM matching and impact analysis.",
+            "mcp": false,
+            "a2a": true
+        }
+    ],
+    "tasks": [
+        {
+            "name": "osv_summary_task",
+            "agent": "osv_summary_agent",
+      "description": "{query}\n\nProtocol:\n1) Call get_osv_vulnerability_data MCP tool ONCE with the vulnerability_id parameter (e.g. json payload for the MCP tool call: {'vulnerability_id': 'GHSA-vgqx-447m-wvcj'}).\n2) IMMEDIATELY after receiving the JSON response, parse it and extract: GHSA ID, CVE ID, package name, affected versions, and severity.\n3) Repeat for all give GHSA-IDs (batch tool calls in one step if supported; never call the tool twice for the same ID). Range semantics: vulnerable_range_start is OSV \"introduced\" (null only if introduced=0) and vulnerable_range_end is the first OSV \"fixed\" version (do not use last affected).\n4) Create a short plain-text summary and proceed to Final Answer. DO NOT call the tool again.\n\nSuccess criteria: You have the vulnerability data when you see a JSON response containing 'ids', 'summary', 'affected', and 'references' fields. At that point, summarize and finish.",
+            "expected_output": "Plain-text short vulnerability report for the provided GHSA IDs, containing key data (package name, affected versions, GHSA/CVE IDs ...). Avoid lengthy explanations."
+        },
+        {
+            "name": "data_coordination_task",
+            "agent": "coordination_agent",
+            "description": "Protocol:\n1) Take the vulnerability report from the previous task output.\n2) Delegate ONCE to the Matcher Agent via A2A (agent to agent protocol), passing the complete vulnerability information in natural language.\n3) IMMEDIATELY after receiving the A2A response, provide your Final Answer with the delegation results. DO NOT call A2A again.\n\nSuccess criteria: You have completed the task when you receive a response from the A2A delegation. At that point, summarize the results and finish.",
+            "expected_output": "Short summary of the A2A delegation to Matcher Agent and the downstream results (affected systems found, notifications sent) or a failure notice if delegation failed."
+        }
+    ],
+    "process": "sequential",
+    "tracing": true
+}

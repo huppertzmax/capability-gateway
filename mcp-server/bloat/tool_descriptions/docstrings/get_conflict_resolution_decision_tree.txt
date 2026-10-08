@@ -1,0 +1,103 @@
+Conflict Resolution Decision Tree (Read-Only Reference)
+
+Purpose
+- Provide deterministic handling for conflicting identity or stewardship signals.
+- Reduce inconsistent outcomes when data sources disagree.
+- Ensure every conflict decision is traceable and reviewable.
+
+What this tool does
+- Returns a static decision tree for conflict resolution.
+- Does not mutate records or dispatch bulletins.
+- Does not access external source systems.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Conflict types
+- identifier conflict: stable ids disagree for same candidate.
+- stewardship conflict: equally strong stewards disagree.
+- attribute conflict: normalized fields diverge beyond tolerance.
+- freshness conflict: old strong signal vs new weak signal.
+
+Decision tree overview
+1) Validate input completeness and source provenance.
+2) Classify conflict type.
+3) Evaluate source authority ranking.
+4) Evaluate signal recency and consistency.
+5) Apply deterministic tie-breakers.
+6) Output decision and evidence bundle.
+
+Authority ranking
+- authoritative inventory source.
+- signed declarative policy.
+- maintained catalog metadata.
+- heuristic inference source.
+- historical fallback source.
+
+Tie-breaker policy
+- prefer higher authority source.
+- if authority equal, prefer newest verified timestamp.
+- if still tied, prefer broader supporting evidence count.
+- if unresolved, route to manual review state.
+
+Decision states
+- auto_accept_left.
+- auto_accept_right.
+- partial_merge.
+- keep_separate.
+- manual_review_required.
+
+Evidence requirements
+- include both competing signal snapshots.
+- include authority score and freshness score.
+- include rule id that triggered outcome.
+- include confidence bucket and uncertainty notes.
+
+Payload schema
+{
+  "conflict_id": "string",
+  "conflict_type": "string",
+  "left_signal": {"source": "string", "weight": 0},
+  "right_signal": {"source": "string", "weight": 0},
+  "decision": "string",
+  "rule_id": "string",
+  "confidence": "high|medium|low"
+}
+
+Manual review triggers
+- equal authority and equal recency.
+- missing provenance on at least one signal.
+- contradictions involving critical production entities.
+- repeated oscillation in previous automated decisions.
+
+Reviewer guidance
+- review raw and normalized views side by side.
+- verify source trust boundaries before overrides.
+- record override reason using controlled vocabulary.
+- feed review outcomes back into rule calibration.
+
+Common mistakes
+- letting newest data override authoritative data blindly.
+- auto-merging conflicts with low-confidence heuristics.
+- failing to persist losing-side evidence.
+- resolving conflicts without clear rule identifiers.
+
+Operational controls
+- version decision tree definitions.
+- run simulation tests before policy changes.
+- monitor manual-review queue growth.
+- add rollback plan for faulty rule deployments.
+
+Metrics
+- conflict auto-resolution rate.
+- manual review acceptance rate.
+- override frequency by conflict type.
+- median conflict resolution time.
+
+Appendix: Reason code examples
+- AUTHORITY_OVERRIDE
+- RECENCY_OVERRIDE
+- SUPPORTING_EVIDENCE_OVERRIDE
+- INSUFFICIENT_PROVENANCE
+- HUMAN_JUDGMENT_REQUIRED

@@ -1,0 +1,101 @@
+Dependency Risk Scoring Rubric (Read-Only Reference)
+
+Purpose
+- Provide a repeatable rubric for operational dependency risk decisions.
+- Support consistent prioritization across teams and reports.
+- Separate observable evidence from subjective impressions.
+
+What this tool does
+- Returns a static rubric with weighted categories.
+- Does not read external telemetry or risk advisory feeds.
+- Does not calculate scores for specific packages.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Scoring model
+- Each category receives a score from 0 to 5.
+- Weighted score = sum(category_score * category_weight).
+- Unknown signals are explicitly tracked in evidence.
+
+Risk bands
+- 0.0 to 1.0: low risk.
+- 1.1 to 2.0: moderate risk.
+- 2.1 to 3.0: elevated risk.
+- 3.1 to 4.0: high risk.
+- 4.1 to 5.0: critical risk.
+
+Category definitions
+1) Release cadence (weight 2).
+2) Maintainer responsiveness (weight 3).
+3) Dependency graph complexity (weight 2).
+4) API stability history (weight 2).
+5) Operational criticality (weight 4).
+6) Observability and debugging quality (weight 1).
+
+Category guidance
+- Score 0 when evidence indicates strong resilience and predictability.
+- Score 1 when minor weaknesses exist but controls are strong.
+- Score 2 when mixed signals suggest increased monitoring.
+- Score 3 when meaningful reliability concerns appear.
+- Score 4 when risk is high and mitigation is required.
+- Score 5 when failure impact and uncertainty are unacceptable.
+
+Unknown handling policy
+- If evidence is missing, record reason as "unknown_signal".
+- Default unknown category score to 2 unless policy overrides.
+- Provide confidence bucket high, medium, or low.
+- Never hide unknowns inside aggregate score only.
+
+Evidence payload shape
+{
+  "dependency": {
+    "ecosystem": "string",
+    "namespace": "string|null",
+    "name": "string",
+    "version": "string|null"
+  },
+  "scores": {
+    "release_cadence": {"score": 0, "evidence": ["..."]},
+    "maintainer_responsiveness": {"score": 0, "evidence": ["..."]},
+    "dependency_complexity": {"score": 0, "evidence": ["..."]},
+    "api_stability": {"score": 0, "evidence": ["..."]},
+    "operational_criticality": {"score": 0, "evidence": ["..."]},
+    "debuggability": {"score": 0, "evidence": ["..."]}
+  }
+}
+
+Interpretation rules
+- High criticality can outweigh low complexity.
+- Strong responsiveness can partially offset release gaps.
+- A single critical category should trigger explicit mitigation tasks.
+- Use historical trend lines, not one snapshot, for final decisions.
+
+Mitigation playbook by band
+- Low: routine updates and standard monitoring.
+- Moderate: pin versions and add integration checks.
+- Elevated: define fallback strategy and upgrade roadmap.
+- High: reduce blast radius and evaluate replacements.
+- Critical: isolate or replace dependency with executive visibility.
+
+Common mistakes
+- Treating popularity as a direct proxy for low risk.
+- Mixing security severity with operational risk without labeling.
+- Scoring without preserving evidence links.
+- Ignoring distinction between build-time and runtime dependencies.
+
+Governance recommendations
+- Review rubric weights quarterly.
+- Require second reviewer for high and critical outcomes.
+- Track disagreement rate to improve scoring calibration.
+- Keep rubric versioned and referenced in reports.
+
+Appendix: Minimal report fields
+- dependency_id
+- rubric_version
+- weighted_score
+- risk_band
+- confidence
+- top_risk_drivers
+- recommended_actions

@@ -1,0 +1,53 @@
+\begin{table}[ht]
+\centering
+\caption{Evaluation Results for GPT-5-nano}
+\renewcommand{\arraystretch}{1.2}
+\setlength{\tabcolsep}{7pt}
+
+\begin{tabular}{lcccc}
+\toprule    & Latency          & Tokens In       & Tokens Out      & Task Score \\
+\midrule
+Simple      & N/A              & N/A             & N/A             & N/A \\
+Simple-Crew & 219.07s          & 12.93k          & 10.26k          & 14.69\% \\
+Gateway     & 305.18s          & 66.34k          & 26.52k          & \textbf{49.06\%} \\
+Gateway-RAG & \textbf{192.18s} & \textbf{52.86k} & \textbf{23.69k} & 10.16\% \\
+\bottomrule
+\end{tabular}
+\label{fig:gpt-5-nano}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\caption{Evaluation Results for GPT-5-mini}
+\renewcommand{\arraystretch}{1.2}
+\setlength{\tabcolsep}{7pt}
+
+\begin{tabular}{lcccc}
+\toprule    & Latency          & Tokens In       & Tokens Out      & Task Score \\
+\midrule
+Simple      & N/A              & N/A             & N/A             & N/A \\
+Simple-Crew & 328.19s          & 68.11k          & 40.37k          & 12.08\% \\
+Gateway     & \textbf{99.34s}  & 60.72k          & \textbf{9.86k}  & \textbf{89.27\%} \\
+Gateway-RAG & 119.00s          & \textbf{59.30k} & 10.49k          & 61.82\% \\
+\bottomrule
+\end{tabular}
+\label{fig:gpt-5-mini}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\caption{Evaluation Results for GPT-5}
+\renewcommand{\arraystretch}{1.2}
+\setlength{\tabcolsep}{7pt}
+
+\begin{tabular}{lcccc}
+\toprule    & Latency          & Tokens In       & Tokens Out      & Task Score \\
+\midrule
+Simple      & N/A              & N/A             & N/A             & N/A \\
+Simple-Crew & 270.01s          & 67.52k          & 52.24k          & 3.44\% \\
+Gateway     & \textbf{188.45s} & \textbf{61.51k} & \textbf{14.21k} & \textbf{93.18\%} \\
+Gateway-RAG & 223.04s          & 67.27k          & 15.50k          & 91.09\% \\
+\bottomrule
+\end{tabular}
+\label{fig:gpt-5-appendix}
+\end{table}

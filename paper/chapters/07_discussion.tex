@@ -1,0 +1,57 @@
+\section{Discussion}
+
+\subsection{Failure modes}
+The pipelines differ not only in final performance, but also in failure types.
+While the gateway-based architectures worst failures are vulnerability version range mismatches, the simple baselines fail earlier and in more fundamental ways.
+
+This is also why the \emph{Simple} baseline is excluded from the quantitative comparison:
+Most runs ended in timeout or pipeline abortion rather than successful task completion, which makes metrics such as latency or token consumption difficult to interpret in a meaningful way.
+The main issues in \emph{Simple} were segmentation faults, likely related to the CrewAI stack and early library version.
+We also observed repeated tool-calling loops and parsing failures that led to stalling and dropped information.
+
+\emph{Simple-Crew} completed runs more reliably, but often got stuck in tool-calling loops, reaching the maximum number of turns.
+This likely contributes to its high latency and output token consumption.
+Also, tool agents being forced to give a final answer after exhausting the maximum number of invocations, even if relevant information could not be retrieved yet probably correlates with the pipelines low task success score.
+
+\subsection{Models, tokens, and verbosity}
+The model comparison shows that lower token consumption does not indicate better results.
+Across the gateway pipelines, output-token usage follows a consistent pattern:
+GPT-5-nano produces the largest outputs by far, GPT-5-mini reduces output drastically, and GPT-5 increases moderately again.
+This aligns with traces where the smallest model tends to over-generate and reiterate more, while the mid-sized model is more concise while retaining similar input token consumption.
+
+Comparing output tokens and latency between pipelines also shows how long and erroneous the trajectory is.
+In the simple baselines, long trajectories can often be attributed to coordination issues.
+This is visible in \emph{Simple-Crew}, whose output token consumption is unusually high compared to gateway-based pipelines, consistent with the observed extra coordination steps and verbose outputs being carried through the whole pipeline run.
+At the same time, \emph{Simple-Crew} quality degrades as model capacity increases while token usage grows.
+Along tool calls occurring and max turns being reached, we have also observed that most individual runs simply miss notifications.
+Combining these two observations suggests that models capable of deep reasoning still can not fix suboptimal information injection strategy.
+
+In contrast, gateway-based pipelines scale positively with model capacity and already score well with the mid-sized backbone.
+This supports the claim that mid-capacity models can be sufficient when planning-time information exposure is kept compact and execution details are pulled only when needed.
+
+In addition, our traces also highlight another token cost driver: 
+Delegation responses from downstream agents can greatly impact token usage in multi-agent chains (in some cases reaching tens of thousands of tokens), due to another unnecessary model generation when receiving the delegation response.
+
+\subsection{Retrieval}
+With the smallest model, \emph{Gateway-RAG} underperforms the non-retrieval gateway variant.
+A plausible explanation is that retrieval-based discovery adds extra cognitive workload (query formulation, selection, verification) that small models might not be able to reliably manage.
+With GPT-5-mini and GPT-5, retrieval becomes much more effective.
+However, the results indicate that the non-retrieval gateway variant is better suited for small, well-configured environments.
+
+\subsection{Scaling}
+The capability-load experiment shows where retrieval becomes essential.
+As the ecosystem grows, \emph{Gateway}'s input token consumption increases roughly proportional to the number of available tools, whereas \emph{Gateway-RAG} remains nearly constant.
+This scaling trend is in line with prior work on retrieval-based agent systems~\cite{gaurav2025dynamicreact, gan2025ragmcp, fei2025mcpzero, lumer2025tooltoagent, lumer2025scalemcp, gaurav2025codemem}.
+Hence, preventing irrelevant capabilities from entering the planning context mitigates context bloat.
+Although related literature finds that long contexts are directly correlated with poor performance, our findings do not match this claim, which might result from not scaling aggressively enough to make the effect visible.
+
+\subsection{Why separation helps}
+We cannot isolate the exact causal impact of each framework mechanism on the improved performance of the gateway architectures.
+However, the observed results (section~\ref{results}) are consistent with the idea that planning quality degrades when execution boilerplate, protocol handling, and irrelevant capability descriptions are mixed within the context window.
+
+In our setting, all pipelines use the same underlying models and the same task and environment configuration.
+However, the baselines are significantly more prone to tool-calling loops, parsing issues, and stalling, alongside low task scores.
+This suggests that agents needing to handle protocols themselves, and the way information is exposed to the planner, negatively affects end-to-end performance.
+
+These observations also match the related literature:
+long contexts degrade reliability, irrelevant information distracts the model, and incorrect capability retrieval is a major source of agent failure~\cite{liu2023lostmiddlellms, shi2023llmseasily, mo2026livemcpbench, fei2025mcpzero}.

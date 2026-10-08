@@ -1,0 +1,103 @@
+Delivery Runbook for Automated Messages (Read-Only Reference)
+
+Purpose
+- Define reliable and auditable delivery behavior for automated bulletins.
+- Standardize retries, deduplication, and observability across channels.
+- Provide incident-ready guidance when delivery quality degrades.
+
+What this tool does
+- Returns a static delivery runbook document.
+- Does not dispatch real bulletins.
+- Does not query providers for current delivery state.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Core principles
+- idempotency: one logical event should not notify repeatedly.
+- traceability: each attempt must be linked to run and message ids.
+- backpressure: respect provider limits and internal capacity.
+- classification: separate transient and permanent failures.
+
+Identifiers
+- run_id identifies a pipeline execution.
+- message_id identifies a logical bulletin.
+- attempt_id identifies each provider submission attempt.
+
+Envelope schema
+{
+  "message_id": "string",
+  "run_id": "string",
+  "channel": "mailbox|chat|webhook|ticket",
+  "recipients": ["string"],
+  "subject": "string|null",
+  "body": "string",
+  "metadata": {
+    "priority": "low|normal|high",
+    "created_at_utc": "string"
+  }
+}
+
+Deduplication policy
+- generate message_id from stable event identity fields.
+- reuse same message_id across retries.
+- persist dedupe state for channel-appropriate retention window.
+- reject duplicate dispatches when prior success is confirmed.
+
+Retry policy
+- retry transient failures only.
+- transient examples: timeout, 429, provider 5xx.
+- permanent examples: invalid recipient, malformed payload, auth denied.
+- cap attempts to avoid runaway loops.
+
+Backoff defaults
+- initial delay 2 seconds.
+- multiplier 2.0.
+- maximum delay 120 seconds.
+- maximum attempts 5.
+- add random jitter up to 1 second.
+
+Observability requirements
+- log message_id and attempt_id.
+- log run_id and channel.
+- log status and failure class.
+- log duration_ms for each attempt.
+
+Recommended metrics
+- success_rate by channel.
+- transient_failure_rate.
+- permanent_failure_rate.
+- retries_per_message.
+- dedupe_hit_rate.
+
+Troubleshooting workflow
+1) confirm provider health and quota status.
+2) sample recent failed payloads.
+3) verify credential validity and scope.
+4) validate template rendering and recipient format.
+5) inspect dedupe key stability.
+
+Security guidance
+- never dispatch secrets in payloads.
+- minimize personal data in logs.
+- apply restricted access to delivery history.
+- sign and verify webhook payloads when applicable.
+
+Channel-specific notes
+- mailbox: avoid oversized attachments; link to artifacts.
+- chat: keep messages concise with action-first structure.
+- webhook: include signature and replay protection.
+- ticketing: update existing ticket instead of creating duplicates.
+
+Common anti-patterns
+- changing dedupe keys between retries.
+- retrying permanent failures indefinitely.
+- suppressing failed attempts from telemetry.
+- mixing operational alerts with marketing-style messaging.
+
+Appendix: Delivery statuses
+- delivered
+- failed_transient
+- failed_permanent
+- suppressed_duplicate

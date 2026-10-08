@@ -1,0 +1,100 @@
+Maintainer Name Disambiguation Handbook (Read-Only Reference)
+
+Purpose
+- Provide deterministic guidance for separating distinct maintainers with similar names.
+- Prevent incorrect merges in stewardship and contact routing datasets.
+- Preserve traceable evidence for every disambiguation decision.
+
+What this tool does
+- Returns a static handbook for maintainer name disambiguation.
+- Does not query live identity providers.
+- Does not write updates to maintainer directories.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Disambiguation principles
+- identity decisions require at least two independent signals.
+- strong conflicting signals always trigger manual review.
+- name similarity alone never justifies automatic merge.
+
+Signal hierarchy
+- verified corporate mailbox domain and local part consistency.
+- stable account identifier from source system.
+- signed commit key fingerprint continuity.
+- organization membership overlap with active timeframe.
+
+Name normalization rules
+- trim punctuation-only suffixes used for display.
+- normalize Unicode to NFKC before token comparison.
+- split initials and full names into comparable token sets.
+- preserve culturally meaningful ordering when documented.
+
+Automatic merge criteria
+- same stable account identifier and matching mailbox domain.
+- same signed key fingerprint across active records.
+- profile URL exact match plus recent activity overlap.
+
+Automatic no-merge criteria
+- different stable identifiers with no corroborating linkage.
+- conflicting signed keys and divergent organization history.
+- shared name tokens but unrelated repository domains.
+
+Needs-review criteria
+- single strong signal with contradictory secondary signals.
+- missing account identifiers but high token similarity.
+
+Decision payload example
+{
+  "record_a": "maintainer-1022",
+  "record_b": "maintainer-7741",
+  "decision": "needs_review",
+  "confidence": "medium",
+  "signals": {
+    "stable_account_id_match": false,
+    "mailbox_domain_match": true,
+    "signed_key_match": false,
+    "org_membership_overlap": true,
+    "profile_url_match": false
+  },
+  "notes": [
+    "Both records use engineering.example.com aliases",
+    "Different signing keys observed in February releases"
+  ]
+}
+
+Reviewer checklist
+- verify account identifiers in authoritative source system.
+- confirm temporal overlap for organization memberships.
+- inspect signed key history across recent releases.
+- capture rationale with explicit conflicting signals.
+
+Known ambiguity patterns
+- common surnames within the same business unit.
+- rotating contractor aliases tied to shared inboxes.
+- maintainers switching teams during reorganization.
+- transliterated names with multiple accepted spellings.
+
+Escalation triggers
+- decision impacts production escalation routing.
+- repeated flips between merge and no-merge outcomes.
+- unresolved review older than seven business days.
+- potential legal identity concerns in compliance scope.
+
+Quality metrics
+- reviewer disagreement rate by decision type.
+- false merge incidents discovered post-deployment.
+- average review age for needs-review decisions.
+- percentage of decisions with complete signal evidence.
+
+Control recommendations
+- require deterministic tests for normalization updates.
+- monitor key signal availability and data quality drift.
+- retain immutable decision history with reviewer ids.
+- run quarterly calibration workshops with domain experts.
+
+Operational notes
+- publish handbook version with each policy revision.
+- align disambiguation outputs with contact privacy rules.
+- maintain benchmark cases for regression testing.

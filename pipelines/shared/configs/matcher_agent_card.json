@@ -1,0 +1,35 @@
+{
+  "agent_id": "matcher_agent",
+  "name": "Matcher Agent",
+  "description": "Vulnerability matcher agent that maps OSV vulnerabilities to SBOM components and identifies responsible system owners for notification.",
+  "version": "1.0.0",
+  "url": "http://localhost:9201/",
+  "default_input_modes": [
+    "text"
+  ],
+  "default_output_modes": [
+    "text"
+  ],
+  "capabilities": {
+    "streaming": false
+  },
+  "skills": [
+    {
+      "id": "analyze_vulnerability_and_notify",
+      "name": "Analyze Vulnerability and Notify Owners",
+      "description": "End-to-end vulnerability impact analysis and notification: accepts plain text vulnerability information, checks system SBOMs to identify affected systems, maps affected systems to their responsible owners, and triggers notifications to those owners. This skill handles the complete workflow from vulnerability analysis to owner notification.",
+      "tags": [
+        "sbom",
+        "impact",
+        "vulnerability",
+        "owners",
+        "notification"
+      ],
+      "examples": [
+        "Given vulnerability information for GHSA-7x3m-9w8k-2p4q, check if any systems are affected and notify the responsible owners.",
+        "Analyze this vulnerability and notify affected system owners: [vulnerability details]",
+        "Check SBOM for impact and notify owners about this security issue"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+\section{Evaluation Methodology}
+
+\subsection{Task Environment}
+We evaluate our proposed architectures on a vulnerability matching and notification pipeline. The system comprises three agents, each with access to dedicated MCP tool servers, that must collaborate to process a given vulnerability identifier:
+\begin{enumerate}
+    \item The \emph{osv lookup agent} retrieves detailed vulnerability information, including affected packages and version ranges, from the official open source vulnerability (\emph{OSV}) database~\cite{osv_api}.
+    \item The \emph{matching agent} compares this information against the organization's software bill of materials (SBOM) to identify affected systems and resolves the responsible owner from a separate registry.
+    \item The \emph{notification agent} compiles the gathered data into a structured JSON payload containing the affected system, matched vulnerability, specific package and version, and the contact person to be informed.
+\end{enumerate}
+
+No single agent possesses all information required to complete the task, making the pipeline a suitable testbed for evaluating multi-agent coordination. We deliberately chose this domain because established vulnerability scanners can process the same inputs deterministically, providing a reliable ground truth against which we can verify whether agents collaborate effectively. The contribution of this work is not the underlying system itself but the architectural patterns it evaluates. Our proposed architectures are task-agnostic, and the vulnerability matching scenario serves as an exemplary environment that offers both the data richness and the verifiable outcomes needed for controlled evaluation.
+
+\subsection{Data and Scenario Generation}
+
+We draw SBOM inputs from \emph{A Dataset of Software Bill of Materials for Evaluating SBOM Consumption Tools}~\cite{kishimoto2025sbom}, which contains $46$ Maven SBOM files. We decompose these SBOMs into individual package entries to form a shared package pool of approximately $800$ packages. For each package, we query known vulnerabilities to determine which CVEs affect it and at which version ranges. This decomposition enables flexible scenario generation, where we reassemble realistic package distributions from the shared pool while controlling for specific risk profiles. Our implementation exposes a configuration interface that determines the number of scenarios, their size, and their risk distribution. We instantiate $20$ scenarios with diverse profiles, each containing approximately $20$ packages (average SBOM length in dataset), and average metrics over these to mitigate potential bias. Additionally, synthetically generated system-owner data using ChatGPT-5.2, as it is not a semantically crucial component but rather relevant for a field-based comparison against the ground truth.
+
+\subsection{Implementation}
+
+To implement the pipelines (\emph{Simple} and \emph{Simple-Crew}), we use the CrewAI framework~\cite{crewai_docs}.
+This choice is motivated by two practical considerations:
+\begin{enumerate}
+    \item CrewAI provides native A2A SDK integration, required for evaluating systems that rely on standardized inter-agent communication~\cite{crewai_a2a}
+    \item Its notion of multi-agent \emph{crews} aligns naturally with our \emph{Simple-Crew} pipeline design
+\end{enumerate}
+To ensure reproducibility, we pin CrewAI to version $1.6.1$ in our environment configuration.
+This version was the latest available PyPI release at the start of our implementation, thus any framework-specific errors we report may be resolved in newer releases~\cite{crewai_pypi}.
+
+The \emph{Gateway} and \emph{Gateway-RAG} pipelines are implemented from scratch using PydanticAI agents and an in-house gateway layer integrating the standard MCP and A2A SDKs behind a unified capability abstraction.
+
+\subsection{Evaluation Suite}
+
+% Use itemize package here
+Given a list of scenarios according to configuration, the bench 
+\begin{enumerate}
+    \item Generates SBOMs with the demanded risk profiles
+    \item Creates ground truth notification data in the same format as the expected notification tool output
+    \item Executes the full pipeline scenario by scenario
+    \item Collects and computes end-to-end metrics for each run
+    \item Averages over all scenario-specific metrics
+\end{enumerate}
+This end-to-end design keeps the evaluation pipeline-agnostic, and thus ensures fair measurement across all systems.
+
+\subsection{Metrics}
+
+We report one effectiveness metric and three efficiency metrics to capture both end-to-end task success and the cost of achieving it.
+Because our systems are multi-stage and tool-augmented, we focus on metrics that remain interpretable under orchestration failures, partial handoffs, and iterative tool-use.
+
+\paragraph{Notification scoring}
+Our primary metric is \texttt{Task Score}, which measures how well the final notification payloads match the ground truth on a field-by-field basis.
+Each expected notification is evaluated on $8$ fields with equal weight.
+We compute a normalized score in $[0,1]$ by summing correct fields and dividing by the number of expected fields across all expected notifications:
+\[
+\text{Task Score} = \frac{\sum \text{correct fields}}{\sum \text{expected fields}}
+\]
+This definition makes the metric sensitive to end-to-end failures: If a run times out or an upstream agent drops a critical detail during a handoff, fewer fields match and the score decreases accordingly. Missing expected notifications contribute zero correct fields while still increasing the denominator, resulting in full penalty. We intentionally do not penalize spurious extra notifications, as false alarms are less critical in a vulnerability context. Additionally, any punishment ratio relative to missing notifications would be arbitrary, as there is no principled basis for choosing one.
+
+In a multi-agent pipeline where no single agent holds all required information, this metric effectively reflects the quality of collaboration: The task score can only be high if each agent contributes its part correctly and passes the right information downstream.
+
+\paragraph{Token consumption}
+We report \texttt{Tokens\_in} as the total number of input tokens consumed end-to-end, aggregated across all model context windows over the full run. Since input token counts are heavily influenced by the amount and size of provided data (e.g. SBOM size and tool descriptions), we primarily interpret relative trends between architectures rather than absolute numbers. \texttt{Tokens\_out} measures the total generated output tokens and serves as a complementary signal, helping to distinguish context bloat caused by larger inputs from bloat caused by model verbosity. Notably, even small differences in token consumption early in the pipeline have recursive impact, as each output token is reused in the next reasoning iteration and may be carried forward to subsequent agents. Beyond their diagnostic value, both metrics also have direct practical relevance, as token consumption is the primary cost driver in production deployments of language model based systems.
+
+\paragraph{Latency}
+\texttt{Latency} measures end-to-end runtime, capturing both model inference time and framework-specific orchestration overhead.
+Similar to the token metrics, latency is particularly sensitive to iterative tool-call loops: Repeated attempts increase both runtime and context usage, which is reflected in \texttt{Latency} and \texttt{Tokens\_in}.
+We therefore use latency to quantify the practical cost of architectural choices beyond raw generation speed.
+
+\subsection{Models and Pipeline Alignment}
+
+All runs use the OpenAI model variants \texttt{gpt-5}, \texttt{gpt-5-mini}, and \texttt{gpt-5-nano} from the same 2025-08-07 snapshot via a fixed Azure endpoint. 
+In the case of \emph{Gateway-RAG}, embeddings are created with OpenAI's \texttt{text-embedding-3-large}.
+Evaluation conditions are held constant across architectures: Task inputs, ground truth, agent roles, and authentication are identical.
+Prompts are kept as similar as possible, though small adaptations are necessary due to architectural differences. Both pipeline types implement an iterative tool-use pattern in which observations are reflected on before producing a final output. In the CrewAI baselines, this pattern is reinforced by framework-managed prompt templates, with tool interfaces exposed directly at agent initialization~\cite{crewai2025prompts}. The gateway architectures instead expose an interface to fetch capability information on demand. To avoid round-trip overhead from retrieving capabilities one by one, we instruct gateway agents to perform \emph{recipe planning}: The agent decomposes its task into sub-steps, identifies which capabilities are likely needed, and batches discovery and execution requests accordingly. This is a best-effort alignment of two fundamentally different interaction patterns, preserving overall comparability at the task and environment level.
+
+\subsection{Environment Scaling Experiment}\label{env-scaling}
+
+The preceding experiments assume a perfectly configured environment where only task-relevant capabilities are available. In practice, however, connecting an MCP server typically exposes its full tool suite rather than a curated subset, meaning agents must operate in environments that contain domain-relevant but task-irrelevant capabilities.
+
+To study this effect, we introduce a controllable MCP server that incrementally adds such capabilities to the environment. Each additional tool carries a plausible vulnerability-management description but is not required to solve the actual task. We scale the number of these additional tools up to eight per agent and compare \emph{Gateway} vs. \emph{Gateway-RAG} under GPT-5, averaging results over five scenarios to observe how \texttt{Tokens\_in} scales with environment size.

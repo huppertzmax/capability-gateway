@@ -1,0 +1,101 @@
+Message Template Style Guide (Read-Only Reference)
+
+Purpose
+- Standardize wording and structure for automated human-facing messages.
+- Improve readability, actionability, and consistency across channels.
+- Reduce confusion caused by vague or overly technical bulletins.
+
+What this tool does
+- Returns a static style guide for message templates.
+- Does not dispatch, schedule, or render messages for real recipients.
+- Does not access channel providers or user directories.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Template objectives
+- clearly explain what happened.
+- clearly state who is affected.
+- clearly state required action and deadline.
+- keep language neutral, precise, and respectful.
+
+Default template sections
+1) title or subject.
+2) short summary.
+3) impact statement.
+4) required action list.
+5) supporting details.
+6) references and escalation path.
+
+Tone and voice
+- use active voice and direct sentences.
+- avoid blame-oriented wording.
+- avoid unexplained acronyms.
+- state urgency only with concrete rationale.
+
+Time formatting
+- always include explicit UTC timestamp for deadlines.
+- include timezone conversion only if channel supports it.
+- avoid relative phrases like "tomorrow" without date.
+
+Placeholder conventions
+- use double-brace placeholders such as {{entity_id}}.
+- placeholder names must be snake_case.
+- unresolved values render as "(unknown)".
+- unknown placeholders create data-quality follow-up tasks.
+
+Sensitive content rules
+- never include secrets or private tokens.
+- minimize personal data in wide-distribution messages.
+- avoid raw log dumps in message body.
+- link to controlled artifacts for deep diagnostics.
+
+Formatting rules
+- keep paragraphs short.
+- use bullets for actions and checklists.
+- use consistent labels like Impact and Action.
+- avoid all-caps emphasis.
+
+Example informational template
+Title: Scheduled maintenance update
+Summary: Routine maintenance is planned for {{component_name}}.
+Impact: Service latency may increase for up to 5 minutes.
+Action: No action is required.
+Details: Start time {{start_time_utc}}.
+
+Example action-required template
+Title: Action required: confirm steward
+Summary: Stewardship is unresolved for {{entity_id}}.
+Impact: Future alerts may route incorrectly.
+Action:
+- confirm owning team.
+- provide authoritative source if available.
+Details:
+- reference id {{reference_id}}.
+- deadline {{deadline_utc}}.
+
+Lint checklist
+- title is present and specific.
+- summary is under 250 characters.
+- required action exists when actionable.
+- no unresolved placeholders remain.
+- sensitive values are redacted.
+
+Accessibility guidance
+- avoid idioms and culturally specific shorthand.
+- prefer plain language and short sentences.
+- include text alternatives for visual-only content.
+- ensure links have descriptive labels.
+
+Common anti-patterns
+- using "ASAP" without explicit deadline.
+- burying required action in long detail paragraphs.
+- mixing multiple unrelated incidents in one message.
+- omitting steward or response channel.
+
+Operational recommendations
+- version template catalog and changelog.
+- test templates with representative data fixtures.
+- monitor recipient response rates and confusion feedback.
+- retire templates that frequently trigger follow-up clarifications.

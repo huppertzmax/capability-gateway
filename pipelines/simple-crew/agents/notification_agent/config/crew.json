@@ -1,0 +1,23 @@
+{
+    "name": "Notification Crew",
+    "agents": [
+        {
+            "id": "tool_agent",
+            "role": "Security Notification Agent",
+            "goal": "Using the send_security_email_notification MCP tool, send out the correct notifications given the inputted vulnerability information, affected system and responsible owner. After sending all required notifications and receiving tool responses, immediately produce a concise final response that informs that the notifications were sent.",
+            "backstory": "Security notification agent that sends structured email notifications to system owners about vulnerabilities affecting their systems. Ensures correct owners receive timely alerts with all necessary information. Keeps notifications concise, actionable, and consistent.",
+            "mcp": true,
+            "a2a": false
+        }
+    ],
+    "tasks": [
+        {
+            "name": "notification_generator_task",
+            "agent": "tool_agent",
+      "description": "Input from Matcher Coordination Agent: {query}.\n\nProtocol:\n1) Parse the GHSA ids, severity, affected systems/packages, package versions, vulnerable version ranges, and responsible owners.\n2) For each unique vulnerability (unique GHSA ID), call send_security_email_notification MCP tool ONCE with these structured, REQUIRED parameters: owner_email, owner_name, affected_systems as list of system names, package_name (Maven fixed format `groupId:artifactId`, e.g. `com.alibaba:fastjson`), package_version, ghsa_id, vulnerable_range_start, vulnerable_range_end. IMPORTANT: Missing/unknown values MUST be JSON null (not 0, not \"null\", not empty strings). Range semantics: start is OSV \"introduced\" (null only if introduced=0); end is the first OSV \"fixed\" version (do not use last affected).\n3) If multiple vulnerabilities (multiple GHSA IDs) are provided, send individual notifications for each one (batch tool calls in one step if supported; never send duplicates).\n4) IMMEDIATELY after sending all notifications and receiving tool responses, summarize the results and provide a Final Answer. DO NOT call tools again.\n5) If no affected owners exist, skip tool calls and provide Final Answer explaining why.\n\nSuccess criteria: You have completed the task when all required notifications have been sent and you received confirmation responses from the tool. At that point, summarize and finish with your final response.",
+            "expected_output": "Brief summary listing all notifications sent: 'Notifications sent for N owners: <names>' or 'No notifications sent: <reason>'. Minimal sanitization; do not change meaning."
+        }
+    ],
+    "process": "sequential",
+    "tracing": true
+}

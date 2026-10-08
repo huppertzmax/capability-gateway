@@ -1,0 +1,43 @@
+{
+    "name": "Matcher Crew",
+    "agents": [
+        {
+            "id": "tool_agent",
+            "role": "SBOM CVE Impact Matcher",
+            "goal": "Understand if our system contains a given vulnerable package and if yes search for the correct owner. Do that by executing the get_sbom_data MCP tool once to get the system bill of material (SBOM). Check if the provided vulnerable package with its version is in our SBOM. If our system is affected, execute the get_system_owner_data MCP tool once to get a list of all system owners. Find the owner of the affected system by the system name. After receiving both tool responses, immediately produce a Final Answer that contains the affected system as well as the owner information (name and email) and return with your final answer. Do not call any of the MCP tools again.",
+            "backstory": "SBOM impact matcher agent that has access to the SBOM and system owner list to analyze if our system is affected by a vulnerability and find the correct owner.",
+            "mcp": true,
+            "a2a": false
+        },
+        {
+            "id": "coordination_agent",
+            "role": "Matcher Coordination Specialist",
+            "goal": "Given the vulnerability report and information about whether our system is affected and the owner information (if affected), delegate to the Notification Agent via A2A (Agent to Agent protocol) using a single A2A call if our system is affected. After delegation completes, immediately provide your final answer with the downstream results—do not call A2A again.",
+            "backstory": "A2A communication specialist, delegating vulnerability, affected system and owner information downstream for security notification, only if our system is affected.",
+            "mcp": false,
+            "a2a": true
+        }
+    ],
+    "tasks": [
+        {
+            "name": "sbom_matching_task",
+            "agent": "tool_agent",
+            "description": "Vulnerable package information:\n{query}\n\nProtocol:\n1) Parse GHSA and CVE ids, packages, affected version ranges, and severity from the input.\n2) Call get_sbom_data MCP tool ONCE to load the SPDX system bill of material (SBOM) JSON of our system.\n3) IMMEDIATELY after receiving the SBOM data, compare vulnerable packages/versions against SBOM packages (names and purls).\n4) If the system contains the vulnerable package in the affected range immediately return a final answer with the vulnerability report data, the name of the system and the vulnerable package and its version in the system. DO NOT call the get_sbom_data MCP tool again.\n6) If nothing matches, also immediately produce a final response stating clearly that no systems are affected.\n\nSuccess criteria: You have the SBOM data when you receive JSON containing 'packages' and 'name' fields. At that point, perform matching analysis and finish with your final response. Do not call the get_system_owner_data MCP tool!",
+            "expected_output": "Structured final response with vulnerability report data, the name of the system and the vulnerable package and its version in the system. If system is not affected include 'System not affected' in the final response."
+        },
+        {
+            "name": "owner_mapping_task",
+            "agent": "tool_agent",
+            "description": "Continue with the context of the previous task that analyzed if our system is affected by a given vulnerable package. Run through the following protocol ONCE only if our system is affected otherwise IMMEDIATELY produce your final response stating that our system is not affected.\n\nProtocol:\n1) Extract the affected system from the previous task output (context).\n2) Call get_system_owner_data MCP tool ONCE to load the system owner directory JSON.\n3) IMMEDIATELY after receiving the owner data, map our affected system to its primary owner.\n4) Return your Final Answer that contains the previous vulnerability and system information as well as the now determined owner name and email address. DO NOT call any MCP tools again and do not invent contacts.\n\nSuccess criteria: You have the owner data when you receive JSON containing owner mappings. At that point, perform mapping and finish with your final response.",
+            "expected_output": "Structured final response with vulnerability report data, name of the system, the vulnerable package and its version in the system and the owners' name and email address of the affected system. If system is not affected include 'System not affected' in the final response."
+        },
+        {
+            "name": "matcher_coordination_task",
+            "agent": "coordination_agent",
+            "description": "Protocol:\n1) Take the vulnerability report and information if our system is affect and the system owner from the previous task output (context).\n2) If our system is affected: delegate ONCE to the Notification Agent via A2A (agent to agent protocol) with the vulnerability details, affected system, and owner information.\n3) If our system is NOT affected: skip A2A delegation and immediately produce a final response stating that the system is not affected.\n4) IMMEDIATELY after receiving the A2A response (or determining no delegation needed), provide your Final Answer. DO NOT call A2A again.\n\nSuccess criteria: You have completed the task when you receive a response from the A2A delegation or determine that the system is not affected. At that point, summarize and finish with your final response.",
+            "expected_output": "Short summary of A2A delegation results (affected systems, owners notified, notification status) or statement that no systems are affected. Keep it brief - 2-4 sentences maximum."
+        }
+    ],
+    "process": "sequential",
+    "tracing": false
+}

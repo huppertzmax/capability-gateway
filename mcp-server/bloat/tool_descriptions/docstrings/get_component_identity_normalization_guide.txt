@@ -1,0 +1,103 @@
+Component Identity Normalization Guide (Read-Only Reference)
+
+Purpose
+- Define a repeatable method for converting noisy component labels into canonical identity records.
+- Enable deterministic joins across catalogs, scan results, and stewardship datasets.
+- Reduce duplicate entities caused by inconsistent raw naming conventions.
+
+What this tool does
+- Returns a static guide for component identity normalization.
+- Does not transform live inputs in this tool call.
+- Does not query external systems for enrichment.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Identity object
+- type: component kind such as service, library, binary, dataset.
+- namespace: optional scope value.
+- name: normalized identifier without version.
+- version: optional version token as text.
+- qualifiers: optional map for variant attributes.
+
+Canonical shape
+{
+  "type": "string",
+  "namespace": "string|null",
+  "name": "string",
+  "version": "string|null",
+  "qualifiers": {},
+  "evidence": {
+    "sources": ["string"],
+    "raw_inputs": ["string"]
+  }
+}
+
+Normalization sequence
+1) Remove leading and trailing whitespace.
+2) Remove invisible control characters.
+3) Apply Unicode normalization.
+4) Parse namespace delimiters when policy supports them.
+5) Separate version token from name.
+6) Extract qualifiers from known suffix patterns.
+7) Build canonical object with stable key ordering.
+
+Field policies
+- type must be lowercase and from an approved enum.
+- namespace may be null when unknown.
+- name must be non-empty and version-free.
+- version remains raw text, not coerced to numeric.
+- qualifier keys use lowercase snake_case.
+
+Deterministic hashing
+- serialize canonical identity without evidence.
+- encode as UTF-8.
+- hash using SHA-256.
+- store hex digest as canonical_hash.
+
+Examples
+Example A raw: Acme/Widget@1.2.3
+Example A canonical:
+{
+  "type": "library",
+  "namespace": "acme",
+  "name": "widget",
+  "version": "1.2.3",
+  "qualifiers": {}
+}
+
+Example B raw: widget-linux-x86_64 2.0.0
+Example B canonical:
+{
+  "type": "binary",
+  "namespace": null,
+  "name": "widget",
+  "version": "2.0.0",
+  "qualifiers": {
+    "platform": "linux",
+    "arch": "x86_64"
+  }
+}
+
+Avoid over-normalization
+- do not remove punctuation blindly.
+- do not merge dash and underscore unless policy says so.
+- do not drop qualifiers to simplify storage.
+- do not infer namespace without evidence.
+
+Confidence and review
+- assign confidence high, medium, or low.
+- route low-confidence parses to manual review.
+- keep both canonical output and original input for audits.
+- track review outcomes to improve parsing rules.
+
+Logging guidance
+- log canonical hash and short display token.
+- avoid logging full raw input in broad INFO channels.
+- store sensitive raw values only in restricted audit storage.
+
+Quality checks
+- no empty name field.
+- stable hash for identical canonical objects.
+- deterministic qualifier ordering.

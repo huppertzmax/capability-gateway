@@ -1,0 +1,102 @@
+Bulletin Channel Selection Policy (Read-Only Reference)
+
+Purpose
+- Define deterministic rules for choosing the right bulletin channel.
+- Reduce under-bulletin and over-bulletin across operational workflows.
+- Align urgency, audience, and message type with channel capabilities.
+
+What this tool does
+- Returns a static policy for channel selection decisions.
+- Does not deliver messages or inspect live channel health.
+- Does not manage subscriptions or user preferences.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Supported channels
+- mailbox for durable, medium-urgency communication.
+- chat for fast coordination and short updates.
+- ticketing for trackable workflow tasks.
+- webhook for system-to-system automation.
+- pager/on-call channel for immediate operational response.
+
+Decision inputs
+- severity and urgency.
+- expected recipient action.
+- audience size and role mix.
+- required delivery traceability.
+- sensitivity of payload content.
+
+Channel policy matrix
+- Sev-0 incident: pager + chat + ticket.
+- Sev-1 operational risk: chat + ticket, optional mailbox summary.
+- Sev-2 planned action: ticket + mailbox.
+- Sev-3 informational update: mailbox or dashboard only.
+- machine callback event: webhook with signed payload.
+
+Escalation constraints
+- avoid pager for non-urgent informational traffic.
+- require ticket creation for work requiring stewardship.
+- require chat thread for active incident coordination.
+- use mailbox for broad asynchronous announcements.
+
+Content fit rules
+- long-form context belongs to ticket or mailbox.
+- short action prompts belong to chat.
+- structured payloads belong to webhook.
+- urgent acknowledgment requests belong to pager-enabled channels.
+
+Reliability considerations
+- verify recipient reachability for chosen channel.
+- include fallback channel for high-severity events.
+- avoid single-channel dependence for critical workflows.
+- monitor channel failure rates and policy drift.
+
+Compliance considerations
+- route sensitive data only through approved channels.
+- apply redaction policy before multi-recipient delivery.
+- avoid personal data in broad chat channels.
+- enforce signing and verification for webhooks.
+
+Selection payload schema
+{
+  "event_type": "string",
+  "severity": "sev0|sev1|sev2|sev3",
+  "audience": ["string"],
+  "required_action": "string",
+  "recommended_channels": ["string"],
+  "fallback_channels": ["string"]
+}
+
+Fallback policy
+- if primary channel fails, retry with backoff then fallback.
+- for Sev-0 and Sev-1, fallback must be immediate.
+- record fallback reason in delivery metadata.
+- avoid duplicate high-noise fanout during fallback loops.
+
+Common anti-patterns
+- dispatching all events to all channels.
+- choosing channel by habit instead of policy inputs.
+- escalating informational events to pager channel.
+- ignoring required traceability for action items.
+
+Metrics
+- acknowledgment latency by channel.
+- delivery success by severity.
+- channel override rate by operators.
+- recipient complaint rate for noise.
+- fallback activation frequency.
+
+Governance recommendations
+- review policy matrix quarterly.
+- align channel stewardship with platform teams.
+- publish examples for frequent event types.
+- run tabletop drills for fallback logic.
+
+Appendix: Reason codes
+- URGENCY_DRIVEN
+- TRACEABILITY_REQUIRED
+- COMPLIANCE_CONSTRAINT
+- AUDIENCE_SCOPE
+- FALLBACK_ACTIVATED

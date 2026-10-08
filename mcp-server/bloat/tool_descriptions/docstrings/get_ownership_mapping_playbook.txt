@@ -1,0 +1,103 @@
+Stewardship Mapping Playbook (Read-Only Reference)
+
+Purpose
+- Define deterministic steps to assign responsible teams to entities.
+- Minimize unknown stewardship while controlling false assignments.
+- Preserve evidence so routing outcomes are explainable and reviewable.
+
+What this tool does
+- Returns a static stewardship mapping playbook.
+- Does not query directories, catalogs, or ticketing systems.
+- Does not mutate stewardship records.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Key definitions
+- steward: accountable team or contact for an entity.
+- signal: evidence suggesting stewardship.
+- assignment: selected steward plus confidence label.
+- unknown: explicit state when evidence is insufficient.
+
+Signal hierarchy
+1) explicit stewardship metadata in authoritative source.
+2) code-steward-like declarative rules.
+3) service catalog maintainers.
+4) repository metadata hints.
+5) naming convention inference.
+6) historical assignments with freshness limits.
+
+Confidence labels
+- confirmed: explicit strong evidence.
+- inferred: multiple supporting but indirect signals.
+- weak: limited or conflicting signals.
+- unknown: no trustworthy stewardship signal.
+
+Weighting guidelines
+- explicit authoritative signal weight 10.
+- declarative rule signal weight 7.
+- catalog maintainer signal weight 5.
+- naming inference signal weight 2.
+- stale history signal weight 1.
+
+Tie-breakers
+- prefer explicit over inferred evidence.
+- prefer newer evidence timestamps.
+- prefer narrow-scope matching rules.
+- escalate as unknown when ambiguity remains.
+
+Assignment payload
+{
+  "entity_id": "string",
+  "assigned_steward": "string|null",
+  "confidence": "confirmed|inferred|weak|unknown",
+  "signals": [
+    {
+      "source": "string",
+      "weight": 0,
+      "value": "string",
+      "timestamp": "string|null"
+    }
+  ],
+  "decision_reason": "string"
+}
+
+Fallback behavior
+- unknown assignments go to triage intake queue.
+- include full evidence snapshot with triage request.
+- create backlog tasks to improve upstream metadata.
+- avoid routing unknown cases to random teams.
+
+Anti-patterns
+- overriding explicit stewards with weak inference.
+- assigning stewards purely from string similarity.
+- discarding evidence after final assignment.
+- using personal contacts as stable stewardship ids.
+
+Operational safeguards
+- require periodic review of inferred mappings.
+- enforce freshness checks on historical assignments.
+- keep stewardship map versioned and auditable.
+- monitor reassignment rate after human review.
+
+Metrics
+- unknown stewardship rate.
+- human reassignment percentage.
+- median time to steward resolution.
+
+Review workflow
+- sample inferred assignments each week.
+- prioritize weak assignments for manual validation.
+- update rules based on recurring override patterns.
+- capture reviewer notes as structured reason codes.
+
+Security considerations
+- stewardship datasets may contain sensitive contact references.
+- apply least-privilege access to detailed steward records.
+- redact personal information from broad logs.
+
+Appendix: Rule examples
+- entity prefix "payments-" -> team-payments.
+- repo path "services/identity/" -> team-identity.
+- if explicit steward exists, ignore all weaker signals.

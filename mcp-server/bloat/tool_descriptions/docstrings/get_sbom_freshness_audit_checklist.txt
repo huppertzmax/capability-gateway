@@ -1,0 +1,100 @@
+inventory manifest Freshness Audit Checklist (Read-Only Reference)
+
+Purpose
+- Define a consistent audit method for evaluating inventory manifest recency and maintenance quality.
+- Reduce blind spots caused by stale component inventories in risk advisory workflows.
+- Provide evidence standards that can be reviewed by security and platform teams.
+
+What this tool does
+- Returns a static checklist for inventory manifest freshness assessments.
+- Does not inspect live repositories or artifact registries.
+- Does not mutate inventory records or trigger remediation actions.
+
+Invocation
+- Call with no arguments.
+- Output is a single Markdown string.
+
+Audit scope
+- Evaluate inventory manifest generation timestamp and publication cadence.
+- Compare declared dependencies with lockfiles and deployed artifacts.
+- Check whether transitive coverage is documented and reproducible.
+- Record exceptions with explicit stewardship and expiry dates.
+
+Freshness tiers
+- Tier A: generated within 24 hours of production deployment.
+- Tier B: generated within 7 days of deployment.
+- Tier C: generated within 30 days of deployment.
+- Tier D: older than 30 days or timestamp missing.
+
+Required evidence
+- inventory manifest format and version, for example CycloneDX 1.5.
+- Generation tool and exact version, for example syft 1.2.0.
+- Source commit hash used for inventory manifest generation.
+- Build pipeline identifier and completion timestamp.
+- Environment marker showing prod, stage, or dev provenance.
+
+Minimum control checks
+- lockfile hash must match the hash recorded during build.
+- component count deltas above 10 percent require explanation.
+- missing package URLs must be tracked as data quality defects.
+- top-level dependencies need explicit transitive expansion status.
+
+Audit scoring model
+- Recency score from 0 to 5 based on freshness tier.
+- Coverage score from 0 to 5 based on direct and transitive completeness.
+- Reproducibility score from 0 to 5 based on documented generation inputs.
+- Traceability score from 0 to 5 based on commit and pipeline linkage.
+- Overall score is the arithmetic mean of the four category scores.
+
+Evidence record example
+{
+  "component": "payments-api",
+  "inventory_manifest_id": "cyclonedx:payments-api:2026-02-26T18:42:11Z",
+  "format": "CycloneDX-1.5",
+  "generator": "syft 1.2.0",
+  "source_commit": "5f2c22f3e8db4d0f8ce12d4e875d5f8c7f8c74f2",
+  "build_id": "buildkite-821944",
+  "tier": "B",
+  "scores": {
+    "recency": 4,
+    "coverage": 5,
+    "reproducibility": 4,
+    "traceability": 5
+  }
+}
+
+Common drift patterns
+- lockfile updated after inventory manifest generation in hotfix releases.
+- container base image changed without regenerating inventory manifest.
+- monorepo path filters excluding newly added submodules.
+- mirrored registry artifacts introducing undeclared checksums.
+
+Escalation triggers
+- Tier D status for production services.
+- Unknown generator version for security-relevant artifacts.
+- Repeated mismatches between inventory manifest and runtime package inventory.
+- Missing steward for unresolved coverage gaps older than 14 days.
+
+Review cadence
+- Critical services: weekly freshness audit.
+- Customer-facing services: biweekly freshness audit.
+- Internal tools: monthly freshness audit.
+- Any post-incident service: immediate ad hoc audit.
+
+Reporting recommendations
+- include service, environment, tier, and score trend.
+- highlight top three causes of freshness degradation.
+- separate data quality defects from process compliance defects.
+- publish aging buckets for unresolved audit findings.
+
+Failure modes to avoid
+- treating generation timestamp as proof of deployment coverage.
+- accepting partial transitive trees without explicit caveats.
+- mixing development inventory manifests into production scorecards.
+- closing findings without evidence attachments.
+
+Operational notes
+- keep checklist versioned and referenced in audit tickets.
+- calibrate thresholds quarterly with platform and security stewards.
+- align evidence retention period with incident forensics policy.
+- map checklist controls to internal risk register categories.
